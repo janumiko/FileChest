@@ -3,3 +3,21 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "myproject.settings"
+
+[tool.black]
+line-length = 99
+include = '\.pyi?$'
+exclude = '''
+/(
+    .git
+  | .hg
+  | .mypy_cache
+  | .tox
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | .pytest
+)/
+'''
