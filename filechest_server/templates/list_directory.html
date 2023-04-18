@@ -1,44 +1,15 @@
 {% load static %}
 {% block content %}
+<h1>Directory listing for {{ path }}</h1>
+    <ul>
+    {% for dir in dirs %}
+        <li><a href="/list/{{ dir }}/">{{ dir }}</a></li>
+    {% endfor %}
+    </ul>
 
-{% for file in hidden_directories %}
-<p class="hidden-dir">
-{% if path %}
-    <a href="/list/{{ path }}/{{ directory }}">
-{% else %}
-    <a href="/list/{{ directory }}">
-{% endif %}
-    {{ directory }}</a></p>
-{% endfor %}
-
-{% for file in hidden_files %}
-<p class="hidden-dir">
-{% if path %}
-    <a href="/view/{{ path }}/{{ file }}">
-{% else %}
-    <a href="/view/{{ file }}">
-{% endif %}
-    {{ file }}</a></p>
-{% endfor %}
-
-{% for directory in directories %}
-<p class="dir_entity">
-{% if path %}
-    <a href="/list/{{ path }}/{{ directory }}">
-{% else %}
-    <a href="/list/{{ directory }}">
-{% endif %}
-    {{ directory }}</a></p>
-{% endfor %}
-
-{% for file in files %}
-<p class="dir_entity">
-{% if path %}
-    <a href="/view/{{ path }}/{{ file }}">
-{% else %}
-    <a href="/view/{{ file }}">
-{% endif %}
-    {{ file }}</a></p>
-{% endfor %}
-
+    <ul>
+    {% for file in files %}
+        <li><a href="/view/{{ file }}">{{ file }}</a></li>
+    {% endfor %}
+    </ul>
 {% endblock %}
