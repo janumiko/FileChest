@@ -1,15 +1,41 @@
-{% load static %}
-{% block content %}
-<h1>Directory listing for {{ path }}</h1>
-    <ul>
-    {% for dir in dirs %}
-        <li><a href="/list/{{ dir }}/">{{ dir }}</a></li>
-    {% endfor %}
-    </ul>
-
-    <ul>
-    {% for file in files %}
-        <li><a href="/view/{{ file }}">{{ file }}</a></li>
-    {% endfor %}
-    </ul>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>File Browser</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>File Browser</h2>
+    <hr>
+    {% if folders|length > 0 or files|length > 0 %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for folder in folders %}
+            <tr>
+              <td><i class="fa fa-folder"></i></td>
+              <td><a href="{{ folder.path }}">{{ folder.name }}</a></td>
+            </tr>
+          {% endfor %}
+          {% for file in files %}
+            <tr>
+              <td><i class="fa fa-file"></i></td>
+              <td>{{ file.file.name }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No files or folders found.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
