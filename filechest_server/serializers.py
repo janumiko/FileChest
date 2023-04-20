@@ -8,14 +8,14 @@ class DirectorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FolderModel
-        fields = ['name', 'subfolders', 'files']
+        fields = ["name", "subfolders", "files"]
 
     @staticmethod
-    def get_subfolders(obj):
+    def get_subfolders(obj: FolderModel) -> list:
         return [folder.name for folder in obj.subfolders.all()]
 
     @staticmethod
-    def get_files(obj):
+    def get_files(obj: FolderModel) -> list:
         files = obj.files.all()
         serializer = FileSerializer(files, many=True)
         return serializer.data
@@ -24,7 +24,7 @@ class DirectorySerializer(serializers.ModelSerializer):
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderModel
-        fields = ['name']
+        fields = ["name"]
 
 
 class FileSerializer(serializers.ModelSerializer):
@@ -34,19 +34,22 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FileModel
-        fields = ['filename', 'tags', 'size']
+        fields = ["filename", "tags", "size"]
 
-    def get_filename(self, obj):
+    @staticmethod
+    def get_filename(obj: FileModel) -> str:
         return obj.filename()
 
-    def get_tags(self, obj):
+    @staticmethod
+    def get_tags(obj: FileModel) -> list:
         return [tag.name for tag in obj.tags.all()]
 
-    def get_size(self, obj):
+    @staticmethod
+    def get_size(obj: FileModel) -> int:
         return obj.file.size
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileTagModel
-        fields = ['name']
+        fields = ["name"]

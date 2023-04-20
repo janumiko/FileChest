@@ -18,7 +18,7 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DirectorySerializer
 
     def get_queryset(self):
-        path = Path(self.kwargs['path'])
+        path = Path(self.kwargs["path"])
 
         folder = FolderModel.objects.filter(path=path.parent, name=path.name)
 
@@ -28,7 +28,7 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
         return folder
 
 
-def view_file(request: HttpRequest, path: str):
+def view_file(request: HttpRequest, path: str) -> FileResponse:
     """
     Open a file in the browser if possible else download it.
 
@@ -46,10 +46,10 @@ def view_file(request: HttpRequest, path: str):
     folder = get_object_or_404(FolderModel, path=folder_path.parent, name=folder_path.name)
     file_object = get_object_or_404(FileModel, folder=folder, file__endswith=path.name)
 
-    return FileResponse(file_object.file.open(mode='rb'), "rb")
+    return FileResponse(file_object.file.open(mode="rb"), "rb")
 
 
-def download_directory(request: HttpRequest, path: str):
+def download_directory(request: HttpRequest, path: str) -> FileResponse:
     """
     Download a directory as a zip file.
 
@@ -69,7 +69,7 @@ def download_directory(request: HttpRequest, path: str):
     )
 
 
-def download_file(request: HttpRequest, path: str):
+def download_file(request: HttpRequest, path: str) -> FileResponse:
     """
     Download a file from the server.
 
@@ -87,4 +87,4 @@ def download_file(request: HttpRequest, path: str):
     folder = get_object_or_404(FolderModel, path=folder_path.parent, name=folder_path.name)
     file_object = get_object_or_404(FileModel, folder=folder, file__endswith=path.name)
 
-    return FileResponse(file_object.file.open(mode='rb'), as_attachment=True)
+    return FileResponse(file_object.file.open(mode="rb"), as_attachment=True)

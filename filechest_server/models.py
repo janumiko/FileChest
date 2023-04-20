@@ -23,14 +23,18 @@ class FolderModel(models.Model):
     """
 
     name = models.CharField(max_length=255)
-    path = models.CharField(max_length=255, editable=False, default='.')
-    parent = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name="subfolders")
-    folders = models.ManyToManyField('self', blank=True, related_name="parent_folders", symmetrical=False, editable=False)
-    files = models.ManyToManyField('FileModel', blank=True, editable=False)
+    path = models.CharField(max_length=255, editable=False, default=".")
+    parent = models.ForeignKey(
+        "self", on_delete=models.PROTECT, null=True, blank=True, related_name="subfolders"
+    )
+    folders = models.ManyToManyField(
+        "self", blank=True, related_name="parent_folders", symmetrical=False, editable=False
+    )
+    files = models.ManyToManyField("FileModel", blank=True, editable=False)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['name', 'path'], name='unique_name_for_path')
+            models.UniqueConstraint(fields=["name", "path"], name="unique_name_for_path")
         ]
 
     def save(self, *args, **kwargs):
@@ -47,7 +51,7 @@ class FolderModel(models.Model):
             self.parent.save()
 
     def __str__(self):
-        return f'{self.path}\\{self.name}'
+        return f"{self.path}\\{self.name}"
 
 
 class FileModel(models.Model):
@@ -64,10 +68,8 @@ class FileModel(models.Model):
         self.folder.files.add(self)
         self.folder.save()
 
-    def filename(self):
+    def filename(self) -> str:
         return Path(self.file.name).name
 
     def __str__(self):
         return self.file.name
-
-

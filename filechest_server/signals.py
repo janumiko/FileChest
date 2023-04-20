@@ -8,7 +8,7 @@ from .models import FolderModel, FileModel
 
 
 @receiver(post_delete, sender=FolderModel)
-def auto_delete_folder_on_delete(sender, instance, **kwargs):
+def auto_delete_folder_on_delete(sender, instance: FolderModel, **kwargs):
     """
     Deletes folder from filesystem
     when corresponding `Folder` object is deleted.
@@ -21,7 +21,7 @@ def auto_delete_folder_on_delete(sender, instance, **kwargs):
 
 
 @receiver(post_delete, sender=FileModel)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
+def auto_delete_file_on_delete(sender, instance: FileModel, **kwargs):
     """
     Deletes file from filesystem
     when corresponding `File` object is deleted.
@@ -34,7 +34,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 
 
 @receiver(pre_save, sender=FileModel)
-def auto_delete_file_on_change(sender, instance, **kwargs):
+def auto_delete_file_on_change(sender, instance: FileModel, **kwargs):
     """
     Deletes old file from filesystem
     when corresponding `File` object is updated
