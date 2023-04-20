@@ -1,15 +1,22 @@
-from django.http import Http404, HttpRequest
-from django.conf import settings
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .models import FileModel
 
 
-def get_path(request: HttpRequest, path: str):
-    # change path from absolute to relative path
-    if path and path[0] == "/":
-        path = ""
+def file_upload_function(instance: "FileModel", filename: str) -> str:
+    """
+    This function is used to generate the path for the file to be uploaded to.
 
-    request_path = settings.MEDIA_ROOT.joinpath(path)
+    Args:
+        instance: The instance of the FileModel.
+        filename: The name of the file.
 
-    if not request_path.exists():
-        raise Http404()
+    Returns:
+        The path to upload the file to.
+    """
 
-    return request_path
+    folder = instance.folder
+    upload_path = f"{folder.path}/{folder.name}/{filename}"
+
+    return upload_path

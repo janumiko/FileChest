@@ -1,5 +1,5 @@
 asgiref==3.6.0
-Django==4.1.7
+Django==4.2
 django-stubs==1.16.0
 django-stubs-ext==0.8.0
 mypy==1.1.1
@@ -9,3 +9,4 @@ tomli==2.0.1
 types-pytz==2022.7.1.2
 types-PyYAML==6.0.12.8
 typing_extensions==4.5.0
+djangorestframework==3.14.0
