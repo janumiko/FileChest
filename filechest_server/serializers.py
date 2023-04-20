@@ -28,16 +28,20 @@ class FolderSerializer(serializers.ModelSerializer):
 class FileSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
     tags = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
 
     class Meta:
         model = FileModel
-        fields = ['filename', 'tags']
+        fields = ['filename', 'tags', 'size']
 
     def get_filename(self, obj):
         return obj.filename()
 
     def get_tags(self, obj):
         return [tag.name for tag in obj.tags.all()]
+
+    def get_size(self, obj):
+        return obj.file.size
 
 
 class TagSerializer(serializers.ModelSerializer):
