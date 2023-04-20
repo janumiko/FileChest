@@ -10,10 +10,12 @@ class DirectorySerializer(serializers.ModelSerializer):
         model = FolderModel
         fields = ['name', 'subfolders', 'files']
 
-    def get_subfolders(self, obj):
+    @staticmethod
+    def get_subfolders(obj):
         return [folder.name for folder in obj.subfolders.all()]
 
-    def get_files(self, obj):
+    @staticmethod
+    def get_files(obj):
         files = obj.files.all()
         serializer = FileSerializer(files, many=True)
         return serializer.data

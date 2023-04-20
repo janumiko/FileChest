@@ -3,6 +3,7 @@ from pathlib import Path
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from django.conf import settings
+
 from .models import FolderModel, FileModel
 
 
@@ -12,6 +13,7 @@ def auto_delete_folder_on_delete(sender, instance, **kwargs):
     Deletes folder from filesystem
     when corresponding `Folder` object is deleted.
     """
+
     path = Path(settings.MEDIA_ROOT).joinpath(instance.path, instance.name)
 
     if path.exists() and path.is_dir() and not any(path.iterdir()):
@@ -24,6 +26,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     Deletes file from filesystem
     when corresponding `File` object is deleted.
     """
+
     path = Path(instance.file.path)
 
     if path.exists() and path.is_file():
@@ -37,6 +40,7 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     when corresponding `File` object is updated
     with new file.
     """
+
     if not instance.pk:
         return False
 

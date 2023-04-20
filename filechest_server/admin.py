@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import FileModel, FolderModel, FileTagModel
 
 
@@ -10,4 +11,3 @@ admin.site.register(FileModel)
 admin.site.register(FolderModel, FolderAdmin)
 admin.site.register(FileTagModel)
 
-# Register your models here.

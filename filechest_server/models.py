@@ -7,6 +7,10 @@ from .utils import file_upload_function
 
 
 class FileTagModel(models.Model):
+    """
+    A model to store the tags for the files.
+    """
+
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
@@ -14,6 +18,10 @@ class FileTagModel(models.Model):
 
 
 class FolderModel(models.Model):
+    """
+    A model to store information about the structure of the folders.
+    """
+
     name = models.CharField(max_length=255)
     path = models.CharField(max_length=255, editable=False, default='.')
     parent = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name="subfolders")
@@ -43,6 +51,10 @@ class FolderModel(models.Model):
 
 
 class FileModel(models.Model):
+    """
+    A model to store the files.
+    """
+
     file = models.FileField(upload_to=file_upload_function)
     folder = models.ForeignKey(FolderModel, on_delete=models.PROTECT)
     tags = models.ManyToManyField(FileTagModel, blank=True)

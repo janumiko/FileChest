@@ -1,14 +1,20 @@
-from rest_framework import viewsets
-from .models import FolderModel, FileModel
-from .serializers import DirectorySerializer
+from pathlib import Path
+from shutil import make_archive
+
 from django.http import Http404, FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
-from pathlib import Path
 from django.conf import settings
-from shutil import make_archive
+from rest_framework import viewsets
+
+from .models import FolderModel, FileModel
+from .serializers import DirectorySerializer
 
 
 class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows users to view a directory.
+    """
+
     serializer_class = DirectorySerializer
 
     def get_queryset(self):
@@ -23,6 +29,17 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 def view_file(request: HttpRequest, path: str):
+    """
+    Open a file in the browser if possible else download it.
+
+    Args:
+        request: The request object.
+        path: The relative path to the file.
+
+    Returns:
+        A FileResponse object.
+    """
+
     path = Path(path)
     folder_path = path.parent
 
@@ -33,6 +50,17 @@ def view_file(request: HttpRequest, path: str):
 
 
 def download_directory(request: HttpRequest, path: str):
+    """
+    Download a directory as a zip file.
+
+    Args:
+        request: The request object.
+        path: The relative path to the directory.
+
+    Returns:
+        A FileResponse object as an attachment.
+    """
+
     path = Path(path)
     make_archive(settings.MEDIA_ROOT.joinpath(path.name), "zip", path)
 
@@ -42,6 +70,17 @@ def download_directory(request: HttpRequest, path: str):
 
 
 def download_file(request: HttpRequest, path: str):
+    """
+    Download a file from the server.
+
+    Args:
+        request: The request object.
+        path: The relative path to the file.
+
+    Returns:
+        A FileResponse object as an attachment.
+    """
+
     path = Path(path)
     folder_path = path.parent
 
