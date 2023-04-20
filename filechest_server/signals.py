@@ -3,10 +3,10 @@ from pathlib import Path
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from django.conf import settings
-from .models import Folder, File
+from .models import FolderModel, FileModel
 
 
-@receiver(post_delete, sender=Folder)
+@receiver(post_delete, sender=FolderModel)
 def auto_delete_folder_on_delete(sender, instance, **kwargs):
     """
     Deletes folder from filesystem
@@ -18,7 +18,7 @@ def auto_delete_folder_on_delete(sender, instance, **kwargs):
         path.rmdir()
 
 
-@receiver(post_delete, sender=File)
+@receiver(post_delete, sender=FileModel)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     Deletes file from filesystem
@@ -30,7 +30,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
         path.unlink()
 
 
-@receiver(pre_save, sender=File)
+@receiver(pre_save, sender=FileModel)
 def auto_delete_file_on_change(sender, instance, **kwargs):
     """
     Deletes old file from filesystem
@@ -41,8 +41,8 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
         return False
 
     try:
-        old_file = File.objects.get(pk=instance.pk).file
-    except File.DoesNotExist:
+        old_file = FileModel.objects.get(pk=instance.pk).file
+    except FileModel.DoesNotExist:
         return False
 
     new_file = instance.file

@@ -6,10 +6,19 @@ from django.conf import settings
 from .utils import file_upload_function
 
 
-class Folder(models.Model):
+class FileTagModel(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class FolderModel(models.Model):
     name = models.CharField(max_length=255)
     path = models.CharField(max_length=255, editable=False, default='.')
-    parent = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name="subfolders")
+    folders = models.ManyToManyField('self', blank=True, related_name="parent_folders", symmetrical=False, editable=False)
+    files = models.ManyToManyField('FileModel', blank=True, editable=False)
 
     class Meta:
         constraints = [
@@ -25,13 +34,23 @@ class Folder(models.Model):
 
         super().save(*args, **kwargs)
 
+        if self.parent is not None:
+            self.parent.folders.add(self)
+            self.parent.save()
+
     def __str__(self):
         return f'{self.path}\\{self.name}'
 
 
-class File(models.Model):
-    folder = models.ForeignKey(Folder, on_delete=models.PROTECT)
+class FileModel(models.Model):
     file = models.FileField(upload_to=file_upload_function)
+    folder = models.ForeignKey(FolderModel, on_delete=models.PROTECT)
+    tags = models.ManyToManyField(FileTagModel, blank=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.folder.files.add(self)
+        self.folder.save()
 
     def filename(self):
         return Path(self.file.name).name

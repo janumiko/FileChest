@@ -1,7 +1,46 @@
 from rest_framework import serializers
-from .models import File
+from .models import FileTagModel, FolderModel, FileModel
+
+
+class DirectorySerializer(serializers.ModelSerializer):
+    subfolders = serializers.SerializerMethodField()
+    files = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FolderModel
+        fields = ['name', 'subfolders', 'files']
+
+    def get_subfolders(self, obj):
+        return [folder.name for folder in obj.subfolders.all()]
+
+    def get_files(self, obj):
+        files = obj.files.all()
+        serializer = FileSerializer(files, many=True)
+        return serializer.data
+
+
+class FolderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FolderModel
+        fields = ['name']
+
 
 class FileSerializer(serializers.ModelSerializer):
+    filename = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+
     class Meta:
-        model = File
-        fields = ['name', 'path', 'content']
+        model = FileModel
+        fields = ['filename', 'tags']
+
+    def get_filename(self, obj):
+        return obj.filename()
+
+    def get_tags(self, obj):
+        return [tag.name for tag in obj.tags.all()]
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FileTagModel
+        fields = ['name']

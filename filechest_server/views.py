@@ -1,43 +1,19 @@
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
-from .models import Folder, File
-from django.http import FileResponse, HttpRequest, HttpResponse
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import FolderModel
+from .serializers import DirectorySerializer
+from django.http import Http404
 from pathlib import Path
-from django.conf import settings
 
 
-def home(request: HttpRequest) -> HttpResponse:
-    return render(request, "home.html")
+class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = DirectorySerializer
 
+    def get_queryset(self):
+        path = Path(self.kwargs['path'])
 
-def list_directory(request: HttpRequest, path: str = ""):
-    if path == '':
-        path = 'root'
-        dirs = Folder.objects.filter(parent=None)
-        files = []
-    else:
-        path = Path(path)
+        folder = FolderModel.objects.filter(path=path.parent, name=path.name)
 
-        folder = get_object_or_404(Folder, path=path.parent, name=path.name)
-        dirs = Folder.objects.filter(parent=folder)
-        files = File.objects.filter(folder=folder)
+        if len(folder) == 0:
+            raise Http404
 
-    return render(
-        request,
-        "list_directory.html",
-        {
-            "files": files,
-            "dirs": dirs,
-            "path": path,
-        },
-    )
-
-
-def view_file(request: HttpRequest, path: str):
-    path = Path(path)
-
-    folder = get_object_or_404(Folder, path=path.parent.parent, name=path.parent.name)
-    file_object = File.objects.get(folder=folder, file__endswith=path.name)
-
-    return FileResponse(file_object.file.open(mode='rb'), "rb")
+        return folder

@@ -1,9 +1,10 @@
-from django.urls import path
-import filechest_server.views as views
+from django.urls import path, include
+from rest_framework import routers
+from . import views
+
+router = routers.DefaultRouter()
+router.register(r'file/(?P<path>.+)', views.DirectoryViewSet, basename='file')
 
 urlpatterns = [
-    path(r"", views.home),
-    path(r"list/", views.list_directory),
-    path(r"list/<path:path>", views.list_directory),
-    path(r"view/<path:path>", views.view_file),
+    path('', include(router.urls)),
 ]
