@@ -28,19 +28,19 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
         return folder
 
 
-def view_file(request: HttpRequest, path: str) -> FileResponse:
+def view_file(request: HttpRequest, url_path: str) -> FileResponse:
     """
     Open a file in the browser if possible else download it.
 
     Args:
         request: The request object.
-        path: The relative path to the file.
+        url_path: current url path.
 
     Returns:
         A FileResponse object.
     """
 
-    path = Path(path)
+    path = Path(url_path)
     folder_path = path.parent
 
     folder = get_object_or_404(FolderModel, path=folder_path.parent, name=folder_path.name)
@@ -49,39 +49,39 @@ def view_file(request: HttpRequest, path: str) -> FileResponse:
     return FileResponse(file_object.file.open(mode="rb"), "rb")
 
 
-def download_directory(request: HttpRequest, path: str) -> FileResponse:
+def download_directory(request: HttpRequest, url_path: str) -> FileResponse:
     """
     Download a directory as a zip file.
 
     Args:
         request: The request object.
-        path: The relative path to the directory.
+        url_path: current url path.
 
     Returns:
         A FileResponse object as an attachment.
     """
 
-    path = Path(path)
-    make_archive(settings.MEDIA_ROOT.joinpath(path.name), "zip", path)
+    path = Path(url_path)
+    make_archive(str(settings.MEDIA_ROOT.joinpath(path.name)), "zip", path)
 
     return FileResponse(
         open(settings.MEDIA_ROOT.joinpath(path.name + ".zip"), "rb"), as_attachment=True
     )
 
 
-def download_file(request: HttpRequest, path: str) -> FileResponse:
+def download_file(request: HttpRequest, url_path: str) -> FileResponse:
     """
     Download a file from the server.
 
     Args:
         request: The request object.
-        path: The relative path to the file.
+        url_path: current url path.
 
     Returns:
         A FileResponse object as an attachment.
     """
 
-    path = Path(path)
+    path = Path(url_path)
     folder_path = path.parent
 
     folder = get_object_or_404(FolderModel, path=folder_path.parent, name=folder_path.name)

@@ -8,7 +8,7 @@ router.register(r"directory/(?P<path>.+)", views.DirectoryViewSet, basename="dir
 
 urlpatterns = [
     path("", include(router.urls)),
-    path(r"download/directory/<path:path>", views.download_directory),
-    path(r"download/file/<path:path>", views.download_file),
-    path(r"view/<path:path>", views.view_file),
+    path(r"download/directory/<path:url_path>", views.download_directory),
+    path(r"download/file/<path:url_path>", views.download_file),
+    path(r"view/<path:url_path>", views.view_file),
 ]
