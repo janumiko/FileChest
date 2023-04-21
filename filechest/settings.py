@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     "filechest_server",
 ]
 
-CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
