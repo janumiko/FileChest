@@ -1,10 +1,20 @@
 from pathlib import Path
 
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import post_delete, pre_save, post_migrate
 from django.dispatch import receiver
 from django.conf import settings
 
 from .models import FolderModel, FileModel
+
+
+@receiver(post_migrate)
+def create_root_folder_object(sender, **kwargs):
+    """After migrations"""
+
+    try:
+        FolderModel.objects.get(name="root")
+    except FolderModel.DoesNotExist:
+        FolderModel.objects.create(name="root", path=".", parent=None)
 
 
 @receiver(post_delete, sender=FolderModel)

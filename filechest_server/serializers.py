@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import FileTagModel, FolderModel, FileModel
 from rest_framework.utils.serializer_helpers import ReturnDict
 
+
 class DirectorySerializer(serializers.ModelSerializer):
     folders = serializers.SerializerMethodField()
     files = serializers.SerializerMethodField()

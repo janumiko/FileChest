@@ -18,7 +18,7 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DirectorySerializer
 
     def get_queryset(self):
-        path = Path(self.kwargs["path"])
+        path = Path("root").joinpath(self.kwargs.get("path", "."))
 
         folder = FolderModel.objects.filter(path=path.parent, name=path.name)
 
