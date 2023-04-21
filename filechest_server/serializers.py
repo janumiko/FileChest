@@ -1,21 +1,21 @@
 from rest_framework import serializers
 from .models import FileTagModel, FolderModel, FileModel
-
+from rest_framework.utils.serializer_helpers import ReturnDict
 
 class DirectorySerializer(serializers.ModelSerializer):
-    subfolders = serializers.SerializerMethodField()
+    folders = serializers.SerializerMethodField()
     files = serializers.SerializerMethodField()
 
     class Meta:
         model = FolderModel
-        fields = ["name", "subfolders", "files"]
+        fields = ["name", "folders", "files"]
 
     @staticmethod
-    def get_subfolders(obj: FolderModel) -> list:
-        return [folder.name for folder in obj.subfolders.all()]
+    def get_folders(obj: FolderModel) -> list:
+        return [folder.name for folder in obj.folders.all()]
 
     @staticmethod
-    def get_files(obj: FolderModel) -> list:
+    def get_files(obj: FolderModel) -> ReturnDict:
         files = obj.files.all()
         serializer = FileSerializer(files, many=True)
         return serializer.data
