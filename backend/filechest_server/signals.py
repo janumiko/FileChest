@@ -4,7 +4,7 @@ from django.db.models.signals import post_delete, pre_save, post_migrate
 from django.dispatch import receiver
 from django.conf import settings
 
-from .models import FolderModel, FileModel
+from .models import Folder, File
 
 
 @receiver(post_migrate)
@@ -12,13 +12,13 @@ def create_root_folder_object(sender, **kwargs):
     """After migrations"""
 
     try:
-        FolderModel.objects.get(name="root")
-    except FolderModel.DoesNotExist:
-        FolderModel.objects.create(name="root", path="", parent=None)
+        Folder.objects.get(name="root")
+    except Folder.DoesNotExist:
+        Folder.objects.create(name="root")
 
 
-@receiver(post_delete, sender=FolderModel)
-def auto_delete_folder_on_delete(sender, instance: FolderModel, **kwargs):
+@receiver(post_delete, sender=Folder)
+def auto_delete_folder_on_delete(sender, instance: Folder, **kwargs):
     """
     Deletes folder from filesystem
     when corresponding `Folder` object is deleted.
@@ -30,8 +30,8 @@ def auto_delete_folder_on_delete(sender, instance: FolderModel, **kwargs):
         path.rmdir()
 
 
-@receiver(post_delete, sender=FileModel)
-def auto_delete_file_on_delete(sender, instance: FileModel, **kwargs):
+@receiver(post_delete, sender=File)
+def auto_delete_file_on_delete(sender, instance: File, **kwargs):
     """
     Deletes file from filesystem
     when corresponding `File` object is deleted.
@@ -43,8 +43,8 @@ def auto_delete_file_on_delete(sender, instance: FileModel, **kwargs):
         path.unlink()
 
 
-@receiver(pre_save, sender=FileModel)
-def auto_delete_file_on_change(sender, instance: FileModel, **kwargs):
+@receiver(pre_save, sender=File)
+def auto_delete_file_on_change(sender, instance: File, **kwargs):
     """
     Deletes old file from filesystem
     when corresponding `File` object is updated
@@ -55,8 +55,8 @@ def auto_delete_file_on_change(sender, instance: FileModel, **kwargs):
         return False
 
     try:
-        old_file = FileModel.objects.get(pk=instance.pk).file
-    except FileModel.DoesNotExist:
+        old_file = File.objects.get(pk=instance.pk).file
+    except File.DoesNotExist:
         return False
 
     new_file = instance.file
