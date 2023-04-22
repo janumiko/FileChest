@@ -15,9 +15,8 @@ class DirectoryViewSet(views.APIView):
     """
     API endpoint that allows users to view a directory.
     """
-
-    # authentication_classes = []
-    # permission_classes = []
+    authentication_classes = []
+    permission_classes = []
 
     def get(self, request, path="."):
         """
