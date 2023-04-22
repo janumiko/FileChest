@@ -1,14 +1,14 @@
 from pathlib import Path
 from shutil import make_archive
 
-from django.http import Http404, FileResponse, HttpRequest
+from django.http import FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from rest_framework import views
 from rest_framework.response import Response
 
 from .serializers import FileSerializer, FolderSerializer
-from .models import FileSystemItem, Folder, File
+from .models import Folder, File
 
 
 class DirectoryAPIView(views.APIView):
