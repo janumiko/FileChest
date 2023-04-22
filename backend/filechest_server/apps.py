@@ -7,4 +7,5 @@ class FileChestServerConfig(AppConfig):
 
     def ready(self):
         from . import signals
+
         pass

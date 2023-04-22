@@ -15,7 +15,7 @@ class Tag(models.Model):
 class FileSystemItem(models.Model):
     name = models.CharField(max_length=255)
     path = models.CharField(max_length=255, editable=False, default=".")
-    parent_folder = models.ForeignKey('Folder', on_delete=models.PROTECT, null=True, blank=True)
+    parent_folder = models.ForeignKey("Folder", on_delete=models.PROTECT, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -26,7 +26,7 @@ class FileSystemItem(models.Model):
         if self.parent_folder:
             self.path = Path(self.parent_folder.path).joinpath(self.parent_folder.name)
         else:
-            self.path = Path('.')
+            self.path = Path(".")
         super().save(*args, **kwargs)
 
 

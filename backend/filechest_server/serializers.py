@@ -5,7 +5,7 @@ from .models import Folder, File, FileSystemItem
 class FileSystemItemSerializer(serializers.ModelSerializer):
     class Meta:
         abstract = True
-        fields = ['name']
+        fields = ["name"]
 
 
 class FolderSerializer(FileSystemItemSerializer):
@@ -18,4 +18,4 @@ class FileSerializer(FileSystemItemSerializer):
 
     class Meta(FileSystemItemSerializer.Meta):
         model = File
-        fields = FileSystemItemSerializer.Meta.fields + ['tags']
+        fields = FileSystemItemSerializer.Meta.fields + ["tags"]

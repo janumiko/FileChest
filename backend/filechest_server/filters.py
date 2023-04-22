@@ -7,8 +7,7 @@ class DirectoryFilter(filters.FilterSet):
     """
     A FilterSet class to filter the FolderModel by the name of a file in its files field.
     """
+
     class Meta:
         model = FolderModel
-        fields = {
-            "name": ["exact"]
-        }
+        fields = {"name": ["exact"]}
