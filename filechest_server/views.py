@@ -1,6 +1,7 @@
 from pathlib import Path
 from shutil import make_archive
 
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import Http404, FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -8,6 +9,7 @@ from rest_framework import viewsets
 
 from .models import FolderModel, FileModel
 from .serializers import DirectorySerializer
+from .filters import DirectoryFilter
 
 
 class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,6 +18,7 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = DirectorySerializer
+    filter_class = DirectoryFilter
 
     def get_queryset(self):
         path = Path("root").joinpath(self.kwargs.get("path", "."))
