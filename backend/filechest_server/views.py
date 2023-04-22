@@ -21,7 +21,7 @@ class DirectoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_class = DirectoryFilter
 
     def get_queryset(self):
-        path = Path("root").joinpath(self.kwargs.get("path", "."))
+        path = Path("root").joinpath(self.kwargs.get("path", ""))
 
         folder = FolderModel.objects.filter(path=path.parent, name=path.name)
 

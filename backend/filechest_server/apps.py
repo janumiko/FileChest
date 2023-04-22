@@ -6,4 +6,4 @@ class FileChestServerConfig(AppConfig):
     name = "filechest_server"
 
     def ready(self):
-        import filechest_server.signals
+        pass

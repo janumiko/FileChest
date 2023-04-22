@@ -14,7 +14,7 @@ def create_root_folder_object(sender, **kwargs):
     try:
         FolderModel.objects.get(name="root")
     except FolderModel.DoesNotExist:
-        FolderModel.objects.create(name="root", path=".", parent=None)
+        FolderModel.objects.create(name="root", path="", parent=None)
 
 
 @receiver(post_delete, sender=FolderModel)
