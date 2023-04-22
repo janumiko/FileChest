@@ -11,7 +11,7 @@ from .serializers import FileSerializer, FolderSerializer
 from .models import FileSystemItem, Folder, File
 
 
-class DirectoryViewSet(views.APIView):
+class DirectoryAPIView(views.APIView):
     """
     API endpoint that allows users to view a directory.
     """
