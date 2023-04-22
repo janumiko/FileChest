@@ -18,7 +18,7 @@ class DirectoryAPIView(views.APIView):
     authentication_classes = []
     permission_classes = []
 
-    def get(self, request, path="."):
+    def get(self, request: HttpRequest, path: str = "."):
         """
         Get a directory.
 
