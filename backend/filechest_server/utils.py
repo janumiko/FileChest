@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .models import FileModel
+    from .models import File
 
 
-def file_upload_function(instance: "FileModel", filename: str) -> str:
+def file_upload_function(instance: "File", filename: str) -> str:
     """
     This function is used to generate the path for the file to be uploaded to.
 
@@ -16,7 +16,7 @@ def file_upload_function(instance: "FileModel", filename: str) -> str:
         The path to upload the file to.
     """
 
-    folder = instance.folder
+    folder = instance.parent_folder
     upload_path = f"{folder.path}/{folder.name}/{filename}"
 
     return upload_path
