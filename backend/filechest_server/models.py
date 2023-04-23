@@ -16,6 +16,7 @@ class FileSystemItem(models.Model):
     name = models.CharField(max_length=255)
     path = models.CharField(max_length=255, editable=False, default=".")
     parent_folder = models.ForeignKey("Folder", on_delete=models.PROTECT, null=True, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,7 +38,6 @@ class Folder(FileSystemItem):
 class File(FileSystemItem):
     name = models.CharField(max_length=255, editable=False)
     file = models.FileField(upload_to=file_upload_function)
-    tags = models.ManyToManyField(Tag, blank=True)
 
     def save(self, *args, **kwargs):
         self.name = self.file.name
