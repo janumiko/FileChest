@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from django.db import models
+from django.conf import settings
 
 from .utils import file_upload_function
 
@@ -32,7 +33,13 @@ class FileSystemItem(models.Model):
 
 
 class Folder(FileSystemItem):
-    pass
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        path = Path(settings.MEDIA_ROOT).joinpath(self.path, self.name)
+        path.mkdir(parents=True, exist_ok=True)
+
+    def __str__(self):
+        return f"{self.path}/{self.name}"
 
 
 class File(FileSystemItem):
@@ -42,3 +49,6 @@ class File(FileSystemItem):
     def save(self, *args, **kwargs):
         self.name = self.file.name
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.path}/{self.name}"
