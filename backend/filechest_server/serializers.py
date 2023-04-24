@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Folder, File, FileSystemItem
+from .models import Folder, File
 
 
 class FileSystemItemSerializer(serializers.ModelSerializer):
