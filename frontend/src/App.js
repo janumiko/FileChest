@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
+const BACKEND_URL = "http://127.0.0.1:8000"
+
 const Home = () => {
   return (
     <div>
@@ -30,28 +32,34 @@ const App = () => {
 export default App;
 
 function Folder() {
-  const [folders, setFolders] = useState([]);
+  const [items, setItems] = useState({"folders": [], "files": []});
   const location = useLocation();
 
   useEffect(() => {
-    console.log(location)
     if (location.pathname.at(-1) !== '/')
     {
       location.pathname += '/'
     }
 
-    fetch(`http://127.0.0.1:8000${location.pathname}`)
+    fetch(`${BACKEND_URL}${location.pathname}`)
       .then((res) => res.json())
-      .then((res) => setFolders(res['folders']))
+      .then((res) => setItems({folders: res['folders'], files: res['files']}))
   }, [location]);
 
   return (
     <div>
       <nav>
-      {folders.map((folder) => (
+      {items["folders"].map((folder) => (
         <div>
           <li>
             <Link to={`${location.pathname}${folder.name}`}>{folder.name}</Link>
+          </li>
+        </div>
+      ))}
+      {items["files"].map((file) => (
+        <div>
+          <li>
+            <Link to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}${file.name}`}>{file.name}</Link>
           </li>
         </div>
       ))}
