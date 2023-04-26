@@ -1,8 +1,8 @@
 const Layout = () => {
   return (
-    <Section>
+    <div>
       <h1>FileChest</h1>
-    </Section>
+    </div>
   );
 };
 

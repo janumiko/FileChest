@@ -32,24 +32,24 @@ const Folder = () => {
   }
 
   return (
-    <Section>
+    <div>
       <nav>
         {items["folders"].map((folder) => (
-          <Section>
+          <div>
             <li>
               <Link to={`${location.pathname}${folder.name}`}>{folder.name}</Link>
             </li>
-          </Section>
+          </div>
         ))}
         {items["files"].map((file) => (
-          <Section>
+          <div>
             <li>
               <Link to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}${file.name}`}>{file.name}</Link>
             </li>
-          </Section>
+          </div>
         ))}
       </nav>
-    </Section>
+    </div>
   );
 }
 
