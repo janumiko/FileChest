@@ -1,61 +1,54 @@
-import { useEffect, useState } from 'react';
-import { Link, BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import React from 'react';
+import {createBrowserRouter, RouterProvider, Link, Outlet, useLoaderData} from 'react-router-dom'
+import Folder from "./components/Folder";
+import ErrorPage from "./components/Error";
 
-const Home = () => {
-  return (
-    <div>
-      <nav>
-        <li>
-          <Link to={`/directory/`}>welcome</Link>
-        </li>
-      </nav>
-    </div>
-  );
-};
 
-const App = () => {
-  return (
-    <div>
-      <h1>FileChest</h1>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/directory/*" element={<Folder />}></Route>
-        </Routes>
-      </Router>
+const BACKEND_URL = 'http://localhost:8000';
+
+const Navbar = () => {
+    return <div>
+        <Link to='/'>Home</Link>
+        <Link to='/directory'>Directory</Link>
+        <Outlet/>
     </div>
-  );
-};
+}
+
+const router = createBrowserRouter([
+    {
+        element: <Navbar/>,
+        errorElement: <ErrorPage/>,
+        children: [
+            {
+                path: "/",
+                element: <div>Hello</div>,
+            },
+            {
+                path: '/directory/*',
+                element: <Folder/>,
+                loader: async ({params}) => {
+                    let path = `${BACKEND_URL}/directory/${params['*']}`;
+                    console.log(path);
+                    const response = await fetch(path);
+
+                    if (response.status === 404) {
+                        throw new Response("Not Found", { status: 404 });
+                    }
+
+                    return await response.json();
+                }
+            },
+        ],
+    },
+]);
+
+
+export function App(props) {
+    return (
+        <div className='App'>
+            <RouterProvider router={router}/>
+        </div>
+    );
+}
 
 export default App;
-
-function Folder() {
-  const [folders, setFolders] = useState([]);
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(location)
-    if (location.pathname.at(-1) !== '/')
-    {
-      location.pathname += '/'
-    }
-
-    fetch(`http://127.0.0.1:8000${location.pathname}`)
-      .then((res) => res.json())
-      .then((res) => setFolders(res['folders']))
-  }, [location]);
-
-  return (
-    <div>
-      <nav>
-      {folders.map((folder) => (
-        <div>
-          <li>
-            <Link to={`${location.pathname}${folder.name}`}>{folder.name}</Link>
-          </li>
-        </div>
-      ))}
-      </nav>
-    </div>
-  );
-}
