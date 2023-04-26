@@ -6,16 +6,16 @@ import NotFound from './NotFound';
 
 const App = () => {
   return (
-    <div>
+    <Section>
       <Layout />
       <Router>
         <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/directory/*" element={<Folder />}/>
-          <Route path="*" element={<NotFound/>}/>
+          <Route path="/" element={<Home />} />
+          <Route path="/directory/*" element={<Folder />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-    </div>
+    </Section>
   );
 };
 

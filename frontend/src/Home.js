@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
-    <div>
+    <Section>
       <nav>
         <li>
           <Link to={`/directory/`}>welcome</Link>
         </li>
       </nav>
-    </div>
+    </Section>
   );
 };
 
