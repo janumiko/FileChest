@@ -49,3 +49,11 @@ export const iconClassByExtension = {
     sh: faFileCode,
     bat: faFileCode,
 };
+
+export const removeTrailingSlash = (path) => 
+{
+    while (path.at(-1) === "/") {
+        path = path.slice(0, -1);
+    }
+    return path;
+}
