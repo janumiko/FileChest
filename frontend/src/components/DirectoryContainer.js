@@ -1,10 +1,12 @@
 import React from 'react';
-import {Container, Row, Col, Card, Table} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {solid} from '@fortawesome/fontawesome-svg-core/import.macro';
-import Breadcrumbs from "./Breadcrumbs";
+import {faFolderTree, faFolder} from '@fortawesome/free-solid-svg-icons';
 import {useLoaderData, useLocation} from "react-router-dom";
+
 import {iconClassByExtension} from "../utils";
+import Breadcrumbs from "./Breadcrumbs";
+
+const BACKEND_URL = 'http://localhost:8000';
 
 const DirectoryContainer = () => {
     const directoryData = useLoaderData();
@@ -18,14 +20,14 @@ const DirectoryContainer = () => {
                 <div className="card-header">
                     <Breadcrumbs/>
                     <hr/>
-                    <h3><FontAwesomeIcon icon={solid("folder-tree")}/> {currentFolder}</h3>
+                    <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
                 </div>
                 <div className="card-body">
                     <ul className="list-group">
                         {directoryData["folders"].map((folder) => (
                             <li key={folder.name} className="list-group-item">
                                 <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon={solid("folder")} className="me-2"/>
+                                    <FontAwesomeIcon icon={faFolder} className="me-2"/>
                                     <a href={`${location.pathname}/${folder.name}`}>{folder.name}</a>
                                 </div>
                             </li>
@@ -36,7 +38,7 @@ const DirectoryContainer = () => {
                                 <li key={file.name} className="list-group-item">
                                     <div className="d-flex align-items-center">
                                         <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                                        <a href={`${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</a>
+                                        <a href={`${BACKEND_URL}/${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</a>
                                     </div>
                                 </li>
                             );
