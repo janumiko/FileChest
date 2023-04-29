@@ -1,23 +1,48 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Layout from './Layout';
-import Home from './Home';
-import Folder from './Folder';
-import NotFound from './NotFound';
+import React from 'react';
+import {createBrowserRouter, RouterProvider, Link, Outlet, useLoaderData} from 'react-router-dom'
+import ErrorPage from "./components/Error";
+import NavBar from "./components/Navbar"
+import DirectoryContainer from "./components/DirectoryContainer";
 
-const App = () => {
-  return (
-    <div>
-      <Layout />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/directory/*" element={<Folder />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </div>
-  );
-};
+
+const BACKEND_URL = 'http://localhost:8000';
+
+
+const router = createBrowserRouter([
+    {
+        element: <NavBar/>,
+        errorElement: <ErrorPage/>,
+        children: [
+            {
+                path: "/",
+                element: <div>Hello</div>,
+            },
+            {
+                path: '/directory/*',
+                element: <DirectoryContainer/>,
+                loader: async ({params}) => {
+                    let path = `${BACKEND_URL}/directory/${params['*']}`;
+                    console.log(path);
+                    const response = await fetch(path);
+
+                    if (response.status === 404) {
+                        throw new Response("Not Found", { status: 404 });
+                    }
+
+                    return await response.json();
+                }
+            },
+        ],
+    },
+]);
+
+
+export function App(props) {
+    return (
+        <div className='App'>
+            <RouterProvider router={router}/>
+        </div>
+    );
+}
 
 export default App;
-
