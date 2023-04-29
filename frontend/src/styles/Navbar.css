@@ -1,0 +1,20 @@
+.navbar-brand {
+    margin-left: 20px;
+    font-size: 1.5rem;
+}
+
+.navbar-nav {
+    margin-right: 20px;
+}
+
+.navbar {
+    background-color: #282c34;
+}
+
+.navbar-light .navbar-brand {
+    color: white;
+}
+
+.navbar-light .navbar-brand:hover {
+    color: lightcyan;
+}

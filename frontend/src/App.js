@@ -1,22 +1,16 @@
 import React from 'react';
 import {createBrowserRouter, RouterProvider, Link, Outlet, useLoaderData} from 'react-router-dom'
-import Folder from "./components/Folder";
 import ErrorPage from "./components/Error";
+import NavBar from "./components/Navbar"
+import DirectoryContainer from "./components/DirectoryContainer";
 
 
 const BACKEND_URL = 'http://localhost:8000';
 
-const Navbar = () => {
-    return <div>
-        <Link to='/'>Home</Link>
-        <Link to='/directory'>Directory</Link>
-        <Outlet/>
-    </div>
-}
 
 const router = createBrowserRouter([
     {
-        element: <Navbar/>,
+        element: <NavBar/>,
         errorElement: <ErrorPage/>,
         children: [
             {
@@ -25,7 +19,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/directory/*',
-                element: <Folder/>,
+                element: <DirectoryContainer/>,
                 loader: async ({params}) => {
                     let path = `${BACKEND_URL}/directory/${params['*']}`;
                     console.log(path);
