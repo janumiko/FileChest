@@ -52,8 +52,17 @@ export const iconClassByExtension = {
 
 export const removeTrailingSlash = (path) => 
 {
-    while (path.at(-1) === "/") {
-        path = path.slice(0, -1);
+    if (path.length === 0) {
+        return path;
     }
-    return path;
+
+    for (var i = path.length - 1; i >= 0; i--)
+    {
+        if (path.at(i) !== "/")
+        {
+            return path.slice(0, i + 1);
+        }
+    }
+
+    return "";
 }
