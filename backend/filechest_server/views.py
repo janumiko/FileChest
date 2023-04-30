@@ -16,9 +16,6 @@ class DirectoryAPIView(views.APIView):
     API endpoint that allows users to view a directory.
     """
 
-    authentication_classes = []
-    permission_classes = []
-
     def get(self, request: HttpRequest, path: str = "."):
         """
         Get a directory.

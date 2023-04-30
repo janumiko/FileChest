@@ -13,7 +13,6 @@ class FileSystemItemSerializer(serializers.ModelSerializer):
 
     def _relative_path(self, obj):
         path = self.context.get("path")
-        print(obj.path, path)
         object_path = Path(obj.path)
         return str(object_path.relative_to(path))
 
