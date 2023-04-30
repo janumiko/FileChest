@@ -175,3 +175,4 @@ def download_file(request: HttpRequest, url_path: str) -> FileResponse:
     file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
 
     return FileResponse(file_object.file.open(mode="rb"), as_attachment=True)
+}

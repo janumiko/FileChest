@@ -1,4 +1,4 @@
-import { createBrowserRouter, json } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
@@ -13,8 +13,8 @@ async function loader({request, params}) {
     console.log('path', path);
     const response = await fetch(path);
 
-    if (response.status === 404) {
-        throw new Response("Not Found", {status: 404});
+    if (response.status !== 200) {
+        throw {status: response.status, data: response.statusText};
     }
 
     return await response.json();

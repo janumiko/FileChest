@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BACKEND_URL } from "../utils";
-import { useNavigate, useLocation} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
-    const [error, setError] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     let navigate = useNavigate(); 
 
@@ -27,12 +26,9 @@ function LoginPage() {
 
         if (response.status === 401) {
             setErrorMessage("Invalid credentials");
-            setError(true);
         } else if (response.status !== 200) {
             setErrorMessage("Something went wrong");
-            setError(true);
         } else {
-            setError(false);
             setErrorMessage("");
             navigate("/directory/");
         }
