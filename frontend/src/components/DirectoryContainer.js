@@ -1,11 +1,10 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faFolderTree, faFolder} from '@fortawesome/free-solid-svg-icons';
+import {faFolder, faFolderTree} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLoaderData, useLocation} from "react-router-dom";
 
-import {iconClassByExtension} from "../utils";
+import {iconClassByExtension, removeTrailingSlash} from "../utils";
 import Breadcrumbs from "./Breadcrumbs";
-import {removeTrailingSlash} from "../utils";
 
 const BACKEND_URL = 'http://localhost:8000';
 
@@ -40,7 +39,8 @@ const DirectoryContainer = () => {
                                 <li key={file.name} className="list-group-item">
                                     <div className="d-flex align-items-center">
                                         <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                                        <Link to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</Link>
+                                        <Link
+                                            to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</Link>
                                     </div>
                                 </li>
                             );
