@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, json } from 'react-router-dom'
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
@@ -27,11 +27,11 @@ const router = createBrowserRouter([
                     console.log(path);
                     const response = await fetch(path);
 
-                    if (response.status === 404) {
-                        throw new Response("Not Found", { status: 404 });
+                    if (response.status !== 200) {
+                        throw { status: response.status, data: response.statusText };
+                    } else {
+                        return await response.json();
                     }
-
-                    return await response.json();
                 }
             },
         ],

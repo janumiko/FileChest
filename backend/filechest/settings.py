@@ -30,7 +30,11 @@ SECRET_KEY = environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(environ["DEBUG"])
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 ALLOWED_HOSTS = environ["DJANGO_ALLOWED_HOSTS"].split(" ")
 
 # Application definition

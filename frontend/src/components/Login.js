@@ -5,6 +5,7 @@ import { useNavigate, useLocation} from "react-router-dom";
 function LoginPage() {
     const [error, setError] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    let navigate = useNavigate(); 
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -20,6 +21,7 @@ function LoginPage() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ "username": username, "password": password }),
+                credentials: "include",
             }
         );
 
@@ -29,15 +31,11 @@ function LoginPage() {
         } else if (response.status !== 200) {
             setErrorMessage("Something went wrong");
             setError(true);
+        } else {
+            setError(false);
+            setErrorMessage("");
+            navigate("/directory/");
         }
-
-        if (error) 
-        {
-            return;
-        }
-
-        const data = await response.json();
-        console.log(data);
     }
 
     return (
