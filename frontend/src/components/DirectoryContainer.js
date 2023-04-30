@@ -75,10 +75,11 @@ const DirectoryHeader = ({currentFolder}) => {
                 </div>
                 <div className="col">
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={handleClick}/>
-                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                Recursive
-                            </label>
+                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                               onChange={handleClick}/>
+                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                            Recursive
+                        </label>
                     </div>
                 </div>
             </div>
