@@ -1,7 +1,13 @@
 from pathlib import Path
 
 from rest_framework import serializers
-from .models import Folder, File
+from .models import Folder, File, Tag
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ["name"]
 
 
 class FileSystemItemSerializer(serializers.ModelSerializer):

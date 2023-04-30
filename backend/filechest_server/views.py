@@ -7,8 +7,8 @@ from django.conf import settings
 from rest_framework import views
 from rest_framework.response import Response
 
-from .serializers import FileSerializer, FolderSerializer
-from .models import Folder, File
+from .serializers import FileSerializer, FolderSerializer, TagSerializer
+from .models import Folder, File, Tag
 
 
 class DirectoryAPIView(views.APIView):
@@ -58,7 +58,7 @@ class DirectoryAPIView(views.APIView):
 
         params = self.get_query_params(request, path)
 
-        if "include-subfolders" not in request.query_params:
+        if "recursive" not in request.query_params:
             folders = Folder.objects.filter(**params)
         else:
             folders = File.objects.none()
@@ -88,12 +88,34 @@ class DirectoryAPIView(views.APIView):
         if "name" in query_params:
             params["name__icontains"] = query_params.get("name")
 
-        if "include-subfolders" in query_params:
+        if "recursive" in query_params:
             params["path__startswith"] = path
         else:
             params["path"] = path
 
         return params
+
+
+class TagsAPIView(views.APIView):
+    """API endpoint that allows users to view tags."""
+
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request: HttpRequest):
+        """
+        Get all tags.
+
+        Args:
+            request: The request object.
+
+        Returns:
+            A list of tags.
+        """
+
+        tags = Tag.objects.all()
+
+        return Response(TagSerializer(tags, many=True).data)
 
 
 def view_file(request: HttpRequest, url_path: str) -> FileResponse:

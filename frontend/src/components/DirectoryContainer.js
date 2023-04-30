@@ -1,20 +1,87 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFolder, faFolderTree} from '@fortawesome/free-solid-svg-icons';
-import {Link, useLoaderData, useLocation} from "react-router-dom";
-
+import {Link, useLoaderData, useLocation, useSearchParams} from "react-router-dom";
 import {iconClassByExtension, removeTrailingSlash} from "../utils";
 import Breadcrumbs from "./Breadcrumbs";
+import AsyncSelect from "react-select/async";
 
 const BACKEND_URL = 'http://localhost:8000';
 
 
+function TagsSelect() {
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const loadOptions = inputValue => {
+        return tagsLoader().then(tags => tags.map(tag => ({value: tag.name, label: tag.name})));
+    };
+
+    const handleChange = tags => {
+        setSelectedTags(tags);
+        searchParams.delete('tags');
+        tags.map(tag => searchParams.append('tags', tag.value));
+        setSearchParams(searchParams);
+    };
+
+    async function tagsLoader() {
+        return await fetch(`${BACKEND_URL}/tags`).then(res => res.json());
+    }
+
+    return (
+        <AsyncSelect
+            isMulti
+            cacheOptions
+            defaultOptions
+            loadOptions={loadOptions}
+            value={selectedTags}
+            onChange={handleChange}
+        />
+    );
+}
+
+
 const DirectoryHeader = ({currentFolder}) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const handleClick = (event) => {
+        if (event.target.checked) {
+            searchParams.append('recursive', 'true');
+        } else {
+            searchParams.delete('recursive');
+        }
+        setSearchParams(searchParams);
+    };
+
+    const handleChange = event => {
+        setSearchParams({name: event.target.value});
+    };
+
     return (
         <div className="card-header">
             <Breadcrumbs/>
             <hr/>
             <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
+            <div className="row g-4">
+                <div className="col">
+                    <input type="text" className="form-control" placeholder="Name" aria-label="Name"
+                           aria-describedby="basic-addon1" onChange={handleChange}/>
+                </div>
+                <div className="col">
+                    <div className="input-group">
+                        <span className="input-group-text" id="basic-addon1">Tags</span>
+                        <TagsSelect/>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="form-check">
+                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={handleClick}/>
+                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Recursive
+                            </label>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
