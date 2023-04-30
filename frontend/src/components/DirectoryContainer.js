@@ -1,7 +1,7 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFolderTree, faFolder} from '@fortawesome/free-solid-svg-icons';
-import {useLoaderData, useLocation} from "react-router-dom";
+import {Link, useLoaderData, useLocation} from "react-router-dom";
 
 import {iconClassByExtension} from "../utils";
 import Breadcrumbs from "./Breadcrumbs";
@@ -30,7 +30,7 @@ const DirectoryContainer = () => {
                             <li key={folder.name} className="list-group-item">
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon={faFolder} className="me-2"/>
-                                    <a href={`${location.pathname}/${folder.name}`}>{folder.name}</a>
+                                    <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
                                 </div>
                             </li>
                         ))}
@@ -40,7 +40,7 @@ const DirectoryContainer = () => {
                                 <li key={file.name} className="list-group-item">
                                     <div className="d-flex align-items-center">
                                         <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                                        <a href={`${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</a>
+                                        <Link to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</Link>
                                     </div>
                                 </li>
                             );

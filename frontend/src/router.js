@@ -1,8 +1,8 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
-import {removeTrailingSlash} from "./utils";
+import { removeTrailingSlash } from "./utils";
 
 
 const BACKEND_URL = 'http://localhost:8000';
@@ -10,8 +10,8 @@ const BACKEND_URL = 'http://localhost:8000';
 
 const router = createBrowserRouter([
     {
-        element: <NavBar/>,
-        errorElement: <ErrorPage/>,
+        element: <NavBar />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: "/",
@@ -19,8 +19,8 @@ const router = createBrowserRouter([
             },
             {
                 path: '/directory/*',
-                element: <DirectoryContainer/>,
-                loader: async ({params}) => {
+                element: <DirectoryContainer />,
+                loader: async ({ params }) => {
                     let path = `${BACKEND_URL}/directory/${removeTrailingSlash(params["*"])}`;
                     console.log(path);
                     const response = await fetch(path);
