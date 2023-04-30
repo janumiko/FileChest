@@ -61,6 +61,6 @@ def auto_delete_file_on_change(sender, instance: File, **kwargs):
 
     new_file = instance.file
 
-    old_file_path = Path(old_file.file.path)
+    old_file_path = Path(old_file.path)
     if not old_file == new_file and old_file_path.exists() and old_file_path.is_file():
         old_file_path.unlink()

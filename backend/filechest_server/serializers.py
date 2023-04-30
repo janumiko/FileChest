@@ -1,11 +1,21 @@
+from pathlib import Path
+
 from rest_framework import serializers
 from .models import Folder, File
 
 
 class FileSystemItemSerializer(serializers.ModelSerializer):
+    relative_path = serializers.SerializerMethodField("_relative_path")
+
     class Meta:
         abstract = True
-        fields = ["name", "tags"]
+        fields = ["name", "tags", "relative_path"]
+
+    def _relative_path(self, obj):
+        path = self.context.get("path")
+        print(obj.path, path)
+        object_path = Path(obj.path)
+        return str(object_path.relative_to(path))
 
 
 class FolderSerializer(FileSystemItemSerializer):

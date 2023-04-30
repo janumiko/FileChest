@@ -35,15 +35,65 @@ class DirectoryAPIView(views.APIView):
 
         get_object_or_404(Folder, path=path.parent, name=path.name)
 
-        folders = Folder.objects.filter(path=path)
-        files = File.objects.filter(path=path)
+        folders, files = self.get_folders_and_files(request, path)
 
         return Response(
             {
-                "folders": FolderSerializer(folders, many=True).data,
-                "files": FileSerializer(files, many=True).data,
+                "folders": FolderSerializer(folders, many=True, context={"path": path}).data,
+                "files": FileSerializer(files, many=True, context={"path": path}).data,
             }
         )
+
+    def get_folders_and_files(self, request: HttpRequest, path: Path) -> tuple:
+        """
+        Get folders and files from the given directory.
+
+        Args:
+            request: The request object.
+            path: The path of the directory.
+
+        Returns:
+            A tuple containing a queryset of folders and a queryset of files.
+        """
+
+        params = self.get_query_params(request, path)
+
+        if "include-subfolders" not in request.query_params:
+            folders = Folder.objects.filter(**params)
+        else:
+            folders = File.objects.none()
+
+        files = File.objects.filter(**params)
+
+        return folders, files
+
+    def get_query_params(self, request: HttpRequest, path: Path) -> dict:
+        """
+        Get the query params from the request.
+
+        Args:
+            request: The request object.
+            path: The path of the directory.
+
+        Returns:
+            A dict of query params.
+        """
+
+        query_params = request.query_params
+        params = {}
+
+        if "tags" in query_params:
+            params["tags__name__in"] = query_params.getlist("tags")
+
+        if "name" in query_params:
+            params["name__icontains"] = query_params.get("name")
+
+        if "include-subfolders" in query_params:
+            params["path__startswith"] = path
+        else:
+            params["path"] = path
+
+        return params
 
 
 def view_file(request: HttpRequest, url_path: str) -> FileResponse:
