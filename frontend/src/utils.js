@@ -10,7 +10,6 @@ import {
     faFileArchive,
     faFileAlt,
     faFileCsv,
-    faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const iconClassByExtension = {
@@ -66,3 +65,5 @@ export const removeTrailingSlash = (path) =>
 
     return "";
 }
+
+export const BACKEND_URL = 'http://localhost:8000';

@@ -3,9 +3,15 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxArchive } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Navbar.css'
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const NavBar = () => {
+    let navigate = useNavigate(); 
+    const routeChange = () => { 
+        let path = "/login/";
+        navigate(path);
+    }
+
     return (
         <div>
             <Navbar expand="md">
@@ -18,7 +24,7 @@ const NavBar = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">fa-box-archive
-                        <Button variant="primary">Login</Button>
+                        <Button variant="primary" onClick={routeChange}>Login</Button>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

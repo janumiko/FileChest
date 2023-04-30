@@ -2,10 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
-import { removeTrailingSlash } from "./utils";
-
-
-const BACKEND_URL = 'http://localhost:8000';
+import { removeTrailingSlash, BACKEND_URL } from "./utils";
+import LoginPage from "./components/Login"
 
 
 const router = createBrowserRouter([
@@ -16,6 +14,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <div>Hello</div>,
+            },
+            {
+                path: "/login/",
+                element: <LoginPage/>
             },
             {
                 path: '/directory/*',
