@@ -8,6 +8,64 @@ import Breadcrumbs from "./Breadcrumbs";
 
 const BACKEND_URL = 'http://localhost:8000';
 
+
+const DirectoryHeader = ({currentFolder}) => {
+    return (
+        <div className="card-header">
+            <Breadcrumbs/>
+            <hr/>
+            <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
+        </div>
+    );
+}
+
+
+const DirectoryBody = ({directoryData, location}) => {
+
+    return (
+        <div className="card-body">
+            <ul className="list-group">
+                {directoryData["folders"].map((folder) => (
+                    <FolderItem folder={folder} location={location}/>
+                ))}
+                {directoryData["files"].map((file) => (
+                    <FileItem file={file} location={location}/>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+
+const FileItem = ({file, location}) => {
+    const extension = file.name.split('.').pop();
+    const fileLink = `${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`;
+
+    return (
+        <li key={file.name} className="list-group-item">
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
+                <Link to={fileLink}>
+                    {file.name}
+                </Link>
+            </div>
+        </li>
+    );
+}
+
+
+const FolderItem = ({folder, location}) => {
+    return (
+        <li key={folder.name} className="list-group-item">
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faFolder} className="me-2"/>
+                <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
+            </div>
+        </li>
+    );
+}
+
+
 const DirectoryContainer = () => {
     const directoryData = useLoaderData();
     const location = useLocation();
@@ -18,35 +76,8 @@ const DirectoryContainer = () => {
     return (
         <div className="container mt-5">
             <div className="card">
-                <div className="card-header">
-                    <Breadcrumbs/>
-                    <hr/>
-                    <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
-                </div>
-                <div className="card-body">
-                    <ul className="list-group">
-                        {directoryData["folders"].map((folder) => (
-                            <li key={folder.name} className="list-group-item">
-                                <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon={faFolder} className="me-2"/>
-                                    <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
-                                </div>
-                            </li>
-                        ))}
-                        {directoryData["files"].map((file) => {
-                            const extension = file.name.split('.').pop();
-                            return (
-                                <li key={file.name} className="list-group-item">
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                                        <Link
-                                            to={`${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`}>{file.name}</Link>
-                                    </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
+                <DirectoryHeader currentFolder={currentFolder}/>
+                <DirectoryBody directoryData={directoryData} location={location}/>
             </div>
         </div>
     );
