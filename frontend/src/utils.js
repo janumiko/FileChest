@@ -1,15 +1,15 @@
 import {
-    faFilePdf,
-    faFileCode,
-    faFileWord,
-    faFileExcel,
-    faFilePowerpoint,
-    faFileImage,
-    faFileAudio,
-    faFileVideo,
-    faFileArchive,
     faFileAlt,
+    faFileArchive,
+    faFileAudio,
+    faFileCode,
     faFileCsv,
+    faFileExcel,
+    faFileImage,
+    faFilePdf,
+    faFilePowerpoint,
+    faFileVideo,
+    faFileWord,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const iconClassByExtension = {
@@ -49,16 +49,13 @@ export const iconClassByExtension = {
     bat: faFileCode,
 };
 
-export const removeTrailingSlash = (path) => 
-{
+export const removeTrailingSlash = (path) => {
     if (path.length === 0) {
         return path;
     }
 
-    for (var i = path.length - 1; i >= 0; i--)
-    {
-        if (path.at(i) !== "/")
-        {
+    for (var i = path.length - 1; i >= 0; i--) {
+        if (path.at(i) !== "/") {
             return path.slice(0, i + 1);
         }
     }
