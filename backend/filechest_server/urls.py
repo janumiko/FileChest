@@ -5,9 +5,12 @@ from . import views
 urlpatterns = [
     path(r"directory/", views.DirectoryAPIView.as_view()),
     path(r"directory/<path:path>", views.DirectoryAPIView.as_view()),
-    path(r"download/directory/<path:url_path>", views.download_directory),
-    path(r"download/file/<path:url_path>", views.download_file),
-    path(r"view/<path:url_path>", views.view_file),
+    path(
+        r"download/directory/<path:url_path>",
+        views.DownloadDirectoryView.as_view(),
+    ),
+    path(r"download/file/<path:url_path>", views.DownloadFileView.as_view()),
+    path(r"view/<path:url_path>", views.FileView.as_view()),
     path(r"tags/", views.TagsAPIView.as_view()),
     path(r"login/", views.LoginView.as_view(), name="login"),
 ]

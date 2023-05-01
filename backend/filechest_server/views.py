@@ -1,5 +1,6 @@
 from pathlib import Path
 from shutil import make_archive
+from typing import Dict, Tuple
 
 from django.http import FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
@@ -9,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.middleware import csrf
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import AbstractBaseUser
+
 
 from .serializers import FileSerializer, FolderSerializer, TagSerializer
 from .models import Folder, File, Tag
@@ -19,7 +22,7 @@ class DirectoryAPIView(views.APIView):
     API endpoint that allows users to view a directory.
     """
 
-    def get(self, request: HttpRequest, path: str = "."):
+    def get(self, request: HttpRequest, path: str = ".") -> Response:
         """
         Get a directory.
 
@@ -44,7 +47,7 @@ class DirectoryAPIView(views.APIView):
             }
         )
 
-    def get_folders_and_files(self, request: HttpRequest, path: Path) -> tuple:
+    def get_folders_and_files(self, request: HttpRequest, path: Path) -> Tuple:
         """
         Get folders and files from the given directory.
 
@@ -53,7 +56,7 @@ class DirectoryAPIView(views.APIView):
             path: The path of the directory.
 
         Returns:
-            A tuple containing a queryset of folders and a queryset of files.
+            A tuple of folders and files.
         """
 
         params = self.get_query_params(request, path)
@@ -67,7 +70,7 @@ class DirectoryAPIView(views.APIView):
 
         return folders, files
 
-    def get_query_params(self, request: HttpRequest, path: Path) -> dict:
+    def get_query_params(self, request: HttpRequest, path: Path) -> Dict[str, str]:
         """
         Get the query params from the request.
 
@@ -99,10 +102,7 @@ class DirectoryAPIView(views.APIView):
 class TagsAPIView(views.APIView):
     """API endpoint that allows users to view tags."""
 
-    authentication_classes = []
-    permission_classes = []
-
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> Response:
         """
         Get all tags.
 
@@ -118,69 +118,82 @@ class TagsAPIView(views.APIView):
         return Response(TagSerializer(tags, many=True).data)
 
 
-def view_file(request: HttpRequest, url_path: str) -> FileResponse:
+class FileView(views.APIView):
+    """API endpoint that allows users to view or download a file."""
+
+    def get(self, request: HttpRequest, url_path: str) -> FileResponse:
+        """
+        Open a file in the browser if possible else download it.
+
+        Args:
+            request: The request object.
+            url_path: current url path.
+
+        Returns:
+            A FileResponse object.
+        """
+
+        path = Path("root").joinpath(url_path)
+        folder_path = path.parent
+
+        folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
+        file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
+
+        return FileResponse(file_object.file.open(mode="rb"), "rb")
+
+
+class DownloadFileView(views.APIView):
+    """API endpoint that allows users to download a file."""
+
+    def get(self, request: HttpRequest, url_path: str) -> FileResponse:
+        """
+        Download a file from the server.
+
+        Args:
+            request: The request object.
+            url_path: current url path.
+
+        Returns:
+            A FileResponse object as an attachment.
+        """
+
+        path = Path("root").joinpath(url_path)
+        folder_path = path.parent
+
+        folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
+        file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
+
+        return FileResponse(file_object.file.open(mode="rb"), as_attachment=True)
+
+
+class DownloadDirectoryView(views.APIView):
+    """API endpoint that allows users to download a directory as a zip file."""
+
+    def get(self, request: HttpRequest, url_path: str) -> FileResponse:
+        """
+        Download a directory as a zip file.
+
+        Args:
+            request: The request object.
+            url_path: current url path.
+
+        Returns:
+            A FileResponse object as an attachment.
+        """
+
+        path = Path("root").joinpath(url_path)
+        make_archive(str(settings.MEDIA_ROOT.joinpath(path.name)), "zip", path)
+
+        return FileResponse(
+            open(settings.MEDIA_ROOT.joinpath(path.name + ".zip"), "rb"), as_attachment=True
+        )
+
+
+def get_tokens_for_user(user) -> Dict[str, str]:
     """
-    Open a file in the browser if possible else download it.
-
-    Args:
-        request: The request object.
-        url_path: current url path.
-
-    Returns:
-        A FileResponse object.
+    Get authorization tokens for an user.
     """
 
-    path = Path("root").joinpath(url_path)
-    folder_path = path.parent
-
-    folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
-    file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
-
-    return FileResponse(file_object.file.open(mode="rb"), "rb")
-
-
-def download_directory(request: HttpRequest, url_path: str) -> FileResponse:
-    """
-    Download a directory as a zip file.
-
-    Args:
-        request: The request object.
-        url_path: current url path.
-
-    Returns:
-        A FileResponse object as an attachment.
-    """
-
-    path = Path("root").joinpath(url_path)
-    make_archive(str(settings.MEDIA_ROOT.joinpath(path.name)), "zip", path)
-
-    return FileResponse(
-        open(settings.MEDIA_ROOT.joinpath(path.name + ".zip"), "rb"), as_attachment=True
-    )
-
-
-def download_file(request: HttpRequest, url_path: str) -> FileResponse:
-    """
-    Download a file from the server.
-
-    Args:
-        request: The request object.
-        url_path: current url path.
-
-    Returns:
-        A FileResponse object as an attachment.
-    """
-
-    path = Path("root").joinpath(url_path)
-    folder_path = path.parent
-
-    folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
-    file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
-
-    return FileResponse(file_object.file.open(mode="rb"), as_attachment=True)
-
-
-def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
     return {
@@ -193,11 +206,9 @@ class LoginView(views.APIView):
     authentication_classes = []
     permission_classes = []
 
-    def post(self, request, format=None):
-        data = request.data
-        response = Response()
-        username = data.get("username", None)
-        password = data.get("password", None)
+    def post(self, request, format=None) -> Response:
+        username = request.data.get("username", None)
+        password = request.data.get("password", None)
         user = authenticate(username=username, password=password)
 
         if user is None or not user.is_active:
@@ -206,6 +217,8 @@ class LoginView(views.APIView):
             )
 
         data = get_tokens_for_user(user)
+
+        response = Response()
         response.set_cookie(
             key=settings.SIMPLE_JWT["AUTH_COOKIE"],
             value=data["access"],
@@ -216,4 +229,5 @@ class LoginView(views.APIView):
         )
         csrf.get_token(request)
         response.data = {"Success": "Login successfully", "data": data}
+
         return response
