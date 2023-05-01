@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import {useNavigate, useRouteError, Link} from "react-router-dom";
+import React, {useEffect} from "react";
+import {Link, useNavigate, useRouteError} from "react-router-dom";
 
 const ErrorPage = () => {
     const error = useRouteError();
-    let navigate = useNavigate(); 
+    let navigate = useNavigate();
 
     // navigate to /login/ if the user is not authenticated
     useEffect(() => {
