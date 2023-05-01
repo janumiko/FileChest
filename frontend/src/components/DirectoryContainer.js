@@ -44,7 +44,7 @@ function TagsSelect() {
 const DirectoryHeader = ({currentFolder}) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const handleClick = (event) => {
+    const handleClick = event => {
         if (event.target.checked) {
             searchParams.append('recursive', 'true');
         } else {
@@ -62,24 +62,16 @@ const DirectoryHeader = ({currentFolder}) => {
             <Breadcrumbs/>
             <hr/>
             <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
-            <div className="row g-4">
-                <div className="col">
-                    <input type="text" className="form-control" placeholder="Name" aria-label="Name"
-                           aria-describedby="basic-addon1" onChange={handleChange}/>
-                </div>
-                <div className="col">
-                    <div className="input-group">
-                        <span className="input-group-text" id="basic-addon1">Tags</span>
-                        <TagsSelect/>
-                    </div>
-                </div>
-                <div className="col">
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"
-                               onChange={handleClick}/>
-                        <label className="form-check-label" htmlFor="flexCheckDefault">
-                            Recursive
-                        </label>
+            <div className="input-group mb-3">
+                <input type="text" className="form-control mt-0" placeholder="Name" aria-label="Name"
+                       aria-describedby="basic-addon1" onChange={handleChange}/>
+                <span className="input-group-text" id="basic-addon1">Tags</span>
+                <TagsSelect/>
+                <div className="input-group-text">
+                    <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                               onClick={handleClick}/>
+                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Recursive</label>
                     </div>
                 </div>
             </div>
@@ -92,7 +84,7 @@ const DirectoryBody = ({directoryData, location}) => {
 
     return (
         <div className="card-body">
-            <ul className="list-group">
+            <ul className="list-group list-group-flush">
                 {directoryData["folders"].map((folder) => (
                     <FolderItem folder={folder} location={location}/>
                 ))}
@@ -107,15 +99,13 @@ const DirectoryBody = ({directoryData, location}) => {
 
 const FileItem = ({file, location}) => {
     const extension = file.name.split('.').pop();
-    const fileLink = `${BACKEND_URL}${location.pathname.replace("directory", "view")}/${file.name}`;
+    const fileLink = `${location.pathname.replace("directory", "download")}/${file.name}`;
 
     return (
         <li key={file.name} className="list-group-item">
             <div className="d-flex align-items-center">
                 <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                <Link to={fileLink}>
-                    {file.name}
-                </Link>
+                <Link to={fileLink}>{file.name}</Link>
             </div>
         </li>
     );

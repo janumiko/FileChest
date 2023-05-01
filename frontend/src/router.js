@@ -1,23 +1,20 @@
-import { createBrowserRouter } from 'react-router-dom'
+import {createBrowserRouter, useNavigate} from 'react-router-dom'
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
-import { removeTrailingSlash, BACKEND_URL } from "./utils";
 import LoginPage from "./components/Login"
+import {directoryLoader, fileLoader} from "./loaders";
+import {useEffect} from "react";
 
 
-async function loader({request, params}) {
-    const query_params = new URL(request.url).searchParams;
+const NavigateBack = () => {
+    const navigate = useNavigate();
 
-    let path = `${BACKEND_URL}/directory/${removeTrailingSlash(params["*"])}?${query_params.toString()}`;
-    console.log('path', path);
-    const response = await fetch(path);
+    useEffect(() => {
+        navigate(-1);
+    }, []);
 
-    if (response.status !== 200) {
-        throw {status: response.status, data: response.statusText};
-    }
-
-    return await response.json();
+    return null;
 }
 
 
@@ -37,8 +34,13 @@ const router = createBrowserRouter([
             {
                 path: '/directory/*',
                 element: <DirectoryContainer/>,
-                loader: loader
+                loader: directoryLoader
             },
+            {
+                path: '/download/*',
+                element: <NavigateBack/>,
+                loader: fileLoader
+            }
         ],
     },
 ]);

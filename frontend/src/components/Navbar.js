@@ -3,11 +3,13 @@ import {Button, Nav, Navbar} from 'react-bootstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBoxArchive} from '@fortawesome/free-solid-svg-icons';
 import '../styles/Navbar.css'
-import { Outlet, useNavigate } from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 const NavBar = () => {
-    let navigate = useNavigate(); 
-    const routeChange = () => { 
+    let navigate = useNavigate();
+    console.log('navbar')
+
+    const routeChange = () => {
         let path = "/login/";
         navigate(path);
     }
@@ -23,7 +25,7 @@ const NavBar = () => {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ms-auto">fa-box-archive
+                    <Nav className="ms-auto">
                         <Button variant="primary" onClick={routeChange}>Login</Button>
                     </Nav>
                 </Navbar.Collapse>
