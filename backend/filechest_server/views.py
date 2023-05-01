@@ -199,25 +199,21 @@ class LoginView(views.APIView):
         username = data.get("username", None)
         password = data.get("password", None)
         user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                data = get_tokens_for_user(user)
-                response.set_cookie(
-                    key=settings.SIMPLE_JWT["AUTH_COOKIE"],
-                    value=data["access"],
-                    expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
-                    secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
-                    httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-                    samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
-                )
-                csrf.get_token(request)
-                response.data = {"Success": "Login successfully", "data": data}
-                return response
-            else:
-                return Response(
-                    {"No active": "This account is not active!!"}, status=status.HTTP_404_NOT_FOUND
-                )
-        else:
+
+        if user is None or not user.is_active:
             return Response(
-                {"Invalid": "Invalid username or password!!"}, status=status.HTTP_404_NOT_FOUND
+                {"Invalid": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
+
+        data = get_tokens_for_user(user)
+        response.set_cookie(
+            key=settings.SIMPLE_JWT["AUTH_COOKIE"],
+            value=data["access"],
+            expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
+            secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+            httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
+            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+        )
+        csrf.get_token(request)
+        response.data = {"Success": "Login successfully", "data": data}
+        return response
