@@ -4,8 +4,11 @@ from shutil import make_archive
 from django.http import FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from rest_framework import views
+from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.middleware import csrf
+from django.contrib.auth import authenticate
 
 from .serializers import FileSerializer, FolderSerializer, TagSerializer
 from .models import Folder, File, Tag
@@ -175,3 +178,46 @@ def download_file(request: HttpRequest, url_path: str) -> FileResponse:
     file_object = get_object_or_404(File, parent_folder=folder, name=path.name)
 
     return FileResponse(file_object.file.open(mode="rb"), as_attachment=True)
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
+
+
+class LoginView(views.APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, format=None):
+        data = request.data
+        response = Response()
+        username = data.get("username", None)
+        password = data.get("password", None)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                data = get_tokens_for_user(user)
+                response.set_cookie(
+                    key=settings.SIMPLE_JWT["AUTH_COOKIE"],
+                    value=data["access"],
+                    expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
+                    secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+                    httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
+                    samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+                )
+                csrf.get_token(request)
+                response.data = {"Success": "Login successfully", "data": data}
+                return response
+            else:
+                return Response(
+                    {"No active": "This account is not active!!"}, status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            return Response(
+                {"Invalid": "Invalid username or password!!"}, status=status.HTTP_404_NOT_FOUND
+            )

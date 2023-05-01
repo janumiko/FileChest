@@ -13,7 +13,7 @@ function LoginPage() {
         let username = formData.get("username");
         let password = formData.get("password");
 
-        const response = await fetch(`${BACKEND_URL}/token/`,
+        const response = await fetch(`${BACKEND_URL}/login/`,
             {
                 method: "POST",
                 headers: {

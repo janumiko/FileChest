@@ -9,4 +9,5 @@ urlpatterns = [
     path(r"download/file/<path:url_path>", views.download_file),
     path(r"view/<path:url_path>", views.view_file),
     path(r"tags/", views.TagsAPIView.as_view()),
+    path(r"login/", views.LoginView.as_view(), name="login"),
 ]
