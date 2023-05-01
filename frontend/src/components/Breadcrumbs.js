@@ -6,9 +6,6 @@ export default function Breadcrumbs() {
     const crumbs = location.pathname.split("/")
         .filter((crumb) => crumb !== "")
 
-
-    console.log('crumbs', crumbs);
-
     return (
         <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
