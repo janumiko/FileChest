@@ -1,5 +1,4 @@
 import {BACKEND_URL, removeTrailingSlash} from "./utils";
-import {redirect} from "react-router-dom";
 
 
 async function directoryLoader({request, params}) {

@@ -99,7 +99,7 @@ const DirectoryBody = ({directoryData, location}) => {
 
 const FileItem = ({file, location}) => {
     const extension = file.name.split('.').pop();
-    const fileLink = `${location.pathname.replace("directory", "download")}/${file.name}`;
+    const fileLink = `${location.pathname.replace("directory", "download/file")}/${file.name}`;
 
     return (
         <li key={file.name} className="list-group-item">
