@@ -81,15 +81,14 @@ const DirectoryHeader = ({currentFolder}) => {
 
 
 const DirectoryBody = ({directoryData, location}) => {
-
     return (
         <div className="card-body">
             <ul className="list-group list-group-flush">
                 {directoryData["folders"].map((folder) => (
-                    <FolderItem folder={folder} location={location}/>
+                    <FolderItem key={`${location.pathname}/${folder.name}`} folder={folder} location={location}/>
                 ))}
                 {directoryData["files"].map((file) => (
-                    <FileItem file={file} location={location}/>
+                    <FileItem key={`${location.pathname}/${file.name}`} file={file} location={location}/>
                 ))}
             </ul>
         </div>
