@@ -6,7 +6,7 @@ async function directoryLoader({request, params}) {
 
     let path = `${BACKEND_URL}/directory/${removeTrailingSlash(params["*"])}?${query_params.toString()}`;
 
-    const response = await fetch(path);
+    const response = await fetch(path, {credentials: "include"});
 
     if (response.status !== 200) {
         throw {status: response.status, data: response.statusText};
@@ -20,7 +20,7 @@ async function fileLoader({params}) {
     const path = `${BACKEND_URL}/download/${removeTrailingSlash(params["*"])}`;
     const name = params["*"].split("/").pop()
 
-    const response = await fetch(path);
+    const response = await fetch(path, {credentials: "include"});
 
     if (response.status !== 200) {
         throw {status: response.status, data: response.statusText};

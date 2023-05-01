@@ -13,7 +13,7 @@ const NavigateBack = () => {
     useEffect(() => {
         console.log('navigate back')
         navigate(-1);
-    }, []);
+    }, [navigate]);
 
     return null;
 }
