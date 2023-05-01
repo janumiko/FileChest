@@ -25,7 +25,7 @@ function TagsSelect() {
     };
 
     async function tagsLoader() {
-        return await fetch(`${BACKEND_URL}/tags`).then(res => res.json());
+        return await fetch(`${BACKEND_URL}/tags`, {credentials: "include"}).then(res => res.json());
     }
 
     return (
