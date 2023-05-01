@@ -7,7 +7,6 @@ import {Outlet, useNavigate} from "react-router-dom";
 
 const NavBar = () => {
     let navigate = useNavigate();
-    console.log('navbar')
 
     const routeChange = () => {
         let path = "/login/";

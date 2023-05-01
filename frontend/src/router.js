@@ -11,7 +11,6 @@ const NavigateBack = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log('navigate back')
         navigate(-1);
     }, [navigate]);
 
