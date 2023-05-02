@@ -8,7 +8,7 @@ export default function Breadcrumbs() {
 
     return (
         <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
+            <ol className="breadcrumb mt-2 ms-3 text-truncate">
                 {crumbs.map((crumb, index) => {
                     const routeTo = `/${crumbs.slice(0, index + 1).join("/")}`;
                     const isLast = index === crumbs.length - 1;
@@ -16,7 +16,7 @@ export default function Breadcrumbs() {
                         <li key={crumb} className="breadcrumb-item active" aria-current="page">{decodeURI(crumb)}</li>
                     ) : (
                         <li key={crumb} className="breadcrumb-item">
-                            <Link to={routeTo}>{decodeURI(crumb)}</Link>
+                            <Link to={{pathname: routeTo, search: location.search}}>{decodeURI(crumb)}</Link>
                         </li>
                     );
                 })}

@@ -32,7 +32,7 @@ class FileSystemItem(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.path}\\{self.name}"
+        return str(Path(self.path).joinpath(self.name))
 
 
 class Folder(FileSystemItem):
