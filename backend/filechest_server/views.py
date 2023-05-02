@@ -1,4 +1,4 @@
-from pathlib import Path, PurePath
+from pathlib import Path
 from shutil import make_archive
 from typing import Dict, Tuple
 
@@ -10,8 +10,6 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.middleware import csrf
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import AbstractBaseUser
-
 
 from .serializers import FileSerializer, FolderSerializer, TagSerializer
 from .models import Folder, File, Tag
