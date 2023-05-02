@@ -6,15 +6,12 @@ import {BACKEND_URL} from "../utils";
 
 const HomePage = () => {
     const [errorMessage, setErrorMessage] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     let navigate = useNavigate();
 
     useEffect(() => {
-        checkIfLoggedIn().then((isLoggedIn) => {
-            if (isLoggedIn) {
-                navigate("/directory/");
-            }
-        });
+        checkIfLoggedIn();
     }, []);
 
     async function checkIfLoggedIn() {
@@ -25,7 +22,7 @@ const HomePage = () => {
             }
         );
 
-        return response.status === 200;
+        response.status === 200 ? setIsLoggedIn(true) : setIsLoggedIn(false);
     }
 
 
@@ -64,16 +61,25 @@ const HomePage = () => {
                         <h1 className="display-1 fw-bold text-primary mb-3 fst-italic">FileChest</h1>
                     </div>
                     <div className="card-body">
-                        <h5 className="card-title p-3">Please login to continue</h5>
-                        <form onSubmit={handleSubmit}>
-                            <input className="form-control mb-3" type="text" name="username" placeholder="Username"/>
-                            <input className="form-control mb-3" type="password" name="password"
-                                   placeholder="Password" autoComplete="on"/>
-                            <button className="btn btn-primary" type="submit">Login</button>
-                        </form>
-                        <div className="alert alert-danger mt-3" role="alert" hidden={errorMessage === ""}>
-                            {errorMessage}
-                        </div>
+                        {isLoggedIn ? (
+                            <button className="btn btn-primary" onClick={() => navigate("/directory/")}>
+                                Go to directory
+                            </button>
+                        ) : (
+                            <div>
+                                <h5 className="card-title p-3">Please login to continue</h5>
+                                <form onSubmit={handleSubmit}>
+                                    <input className="form-control mb-3" type="text" name="username"
+                                           placeholder="Username"/>
+                                    <input className="form-control mb-3" type="password" name="password"
+                                           placeholder="Password" autoComplete="on"/>
+                                    <button className="btn btn-primary" type="submit">Login</button>
+                                </form>
+                                <div className="alert alert-danger mt-3" role="alert" hidden={errorMessage === ""}>
+                                    {errorMessage}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
