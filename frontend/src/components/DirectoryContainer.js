@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faFolder, faFolderTree} from '@fortawesome/free-solid-svg-icons';
+import {faFile, faFileDownload, faFileZipper, faFolder, faFolderTree, faTags} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLoaderData, useLocation, useSearchParams} from "react-router-dom";
-import {iconClassByExtension, removeTrailingSlash} from "../utils";
-import Breadcrumbs from "./Breadcrumbs";
 import AsyncSelect from "react-select/async";
+import {Button} from "react-bootstrap";
 
-const BACKEND_URL = 'http://localhost:8000';
+import Breadcrumbs from "./Breadcrumbs";
+import {BACKEND_URL, downloadFile, formatBytes, iconClassByExtension} from "../utils";
 
 
 function TagsSelect() {
@@ -41,8 +41,9 @@ function TagsSelect() {
 }
 
 
-const DirectoryHeader = ({currentFolder}) => {
+const DirectoryHeader = ({currentFolder, location}) => {
     const [searchParams, setSearchParams] = useSearchParams();
+    const directoryLink = location.pathname.replace('directory', 'download/directory')
 
     const handleClick = event => {
         if (event.target.checked) {
@@ -61,17 +62,42 @@ const DirectoryHeader = ({currentFolder}) => {
         <div className="card-header">
             <Breadcrumbs/>
             <hr/>
-            <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
-            <div className="input-group mb-3">
-                <input type="text" className="form-control mt-0" placeholder="Name" aria-label="Name"
-                       aria-describedby="basic-addon1" onChange={handleChange}/>
-                <span className="input-group-text" id="basic-addon1">Tags</span>
-                <TagsSelect/>
-                <div className="input-group-text">
-                    <div className="form-check form-switch">
-                        <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                               onClick={handleClick}/>
-                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Recursive</label>
+            <div className="d-flex bd-highlight">
+                <div className="p-2 flex-grow-1 bd-highlight">
+                    <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
+                </div>
+                {location.pathname !== '/directory' && <div className="d-flex p-2 justify-content-end">
+                    <Button className="p-2 bd-highlight"
+                            onClick={() => downloadFile(directoryLink, `${currentFolder}.zip`)}>
+                        <FontAwesomeIcon
+                            icon={faFileZipper}
+                            className="me-2"
+                        />
+                        Download archive
+                    </Button>
+                </div>}
+
+            </div>
+            <div className="d-flex bd-highlight">
+                <div className="p-2 bd-highlight">
+                    <div className="input-group mb-3">
+                        <input type="text" className="form-control mt-0" placeholder="Name" aria-label="Name"
+                               aria-describedby="basic-addon1" onChange={handleChange}/>
+                    </div>
+                </div>
+                <div className="p-2 flex-grow-1 bd-highlight">
+                    <div className="input-group">
+                        <span className="input-group-text" id="basic-addon1">Tags</span>
+                        <TagsSelect/>
+                    </div>
+                </div>
+                <div className="p-2 bd-highlight">
+                    <div className="input-group-text">
+                        <div className="form-check form-switch">
+                            <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                   onClick={handleClick}/>
+                            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Recursive</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,16 +122,50 @@ const DirectoryBody = ({directoryData, location}) => {
 }
 
 
-const FileItem = ({file, location}) => {
+const FileItem = ({file}) => {
     const extension = file.name.split('.').pop();
-    const fileLink = `${location.pathname.replace("directory", "download/file")}/${file.name}`;
+    // FIXME: find a better way to create the file link
+    const relativePath = file["relative_path"].replace(/\\/g, "/")
+    const fileLink = `/download/file/${relativePath}/${file.name}`.replace('./', '');
 
     return (
         <li key={file.name} className="list-group-item">
-            <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={iconClassByExtension[extension]} className="me-2"/>
-                <Link to={fileLink}>{file.name}</Link>
+            <div className="d-flex bd-highlight">
+                <div className="p-2 bd-highlight">
+                    <FontAwesomeIcon
+                        icon={iconClassByExtension[extension] || faFile}
+                        className="me-2"
+                    />
+                </div>
+                <div className="p-2 flex-grow-1 bd-highlight">
+                    {file.name}
+                </div>
+                <div className="col-3">
+                    {file["relative_path"] ?
+                        <Link to={`/directory/${file["relative_path"]}`}>{file["relative_path"]}</Link> : null}
+                </div>
+                <div className="col-1 p-2">
+                    {formatBytes(file.size)}
+                </div>
+                <div className="d-flex justify-content-end">
+                    <button type="button" className="btn btn-primary" onClick={() => downloadFile(fileLink, file.name)}>
+                        <FontAwesomeIcon icon={faFileDownload}/>
+                    </button>
+                </div>
             </div>
+            {file.tags.length > 0 ? (
+                <div className="d-flex bd-highlight">
+                    <div className="p-2 bd-highlight">
+                        <FontAwesomeIcon icon={faTags} className="me-2"/>
+                    </div>
+                    <div className="p-2 flex-grow-1 bd-highlight">
+                        {file.tags.map((tag) => (
+                            <span key={tag} className="badge bg-secondary me-1">{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            ) : null}
+
         </li>
     );
 }
@@ -114,10 +174,29 @@ const FileItem = ({file, location}) => {
 const FolderItem = ({folder, location}) => {
     return (
         <li key={folder.name} className="list-group-item">
-            <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={faFolder} className="me-2"/>
-                <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
+            <div className="d-flex bd-highlight">
+                <div className="p-2 bd-highlight">
+                    <FontAwesomeIcon
+                        icon={faFolder}
+                        className="me-2"
+                    />
+                </div>
+                <div className="p-2 flex-grow-1 bd-highlight">
+                    <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
+                </div>
             </div>
+            {folder.tags.length > 0 ? (
+                <div className="d-flex bd-highlight">
+                    <div className="p-2 bd-highlight">
+                        <FontAwesomeIcon icon={faTags} className="me-2"/>
+                    </div>
+                    <div className="p-2 flex-grow-1 bd-highlight">
+                        {folder.tags.map((tag) => (
+                            <span key={tag} className="badge bg-secondary me-1">{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            ) : null}
         </li>
     );
 }
@@ -126,14 +205,14 @@ const FolderItem = ({folder, location}) => {
 const DirectoryContainer = () => {
     const directoryData = useLoaderData();
     const location = useLocation();
-    const currentFolder = location.pathname.split("/").pop();
+    const currentFolder = decodeURI(location.pathname.split("/").pop());
 
-    location.pathname = removeTrailingSlash(location.pathname)
+    location.pathname = location.pathname.replace(/\/$/, "");
 
     return (
         <div className="container mt-5">
             <div className="card">
-                <DirectoryHeader currentFolder={currentFolder}/>
+                <DirectoryHeader currentFolder={currentFolder} location={location}/>
                 <DirectoryBody directoryData={directoryData} location={location}/>
             </div>
         </div>

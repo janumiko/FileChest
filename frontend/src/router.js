@@ -1,21 +1,10 @@
-import {createBrowserRouter, useNavigate} from 'react-router-dom'
+import {createBrowserRouter, redirect} from 'react-router-dom'
+
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
 import LoginPage from "./components/Login"
-import {directoryLoader, fileLoader} from "./loaders";
-import {useEffect} from "react";
-
-
-const NavigateBack = () => {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        navigate(-1);
-    }, [navigate]);
-
-    return null;
-}
+import {directoryLoader} from "./loaders";
 
 
 const router = createBrowserRouter([
@@ -25,7 +14,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <div>Hello</div>,
+                element: redirect("/directory/"),
             },
             {
                 path: "/login/",
@@ -35,11 +24,6 @@ const router = createBrowserRouter([
                 path: '/directory/*',
                 element: <DirectoryContainer/>,
                 loader: directoryLoader
-            },
-            {
-                path: '/download/*',
-                element: <NavigateBack/>,
-                loader: fileLoader
             }
         ],
     },

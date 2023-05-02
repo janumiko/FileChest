@@ -2,8 +2,9 @@ import React from "react";
 import {Button, Nav, Navbar} from 'react-bootstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBoxArchive} from '@fortawesome/free-solid-svg-icons';
-import '../styles/Navbar.css'
 import {Outlet, useNavigate} from "react-router-dom";
+
+import '../styles/Navbar.css'
 
 const NavBar = () => {
     let navigate = useNavigate();

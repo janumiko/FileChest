@@ -12,6 +12,7 @@ import {
     faFileWord,
 } from "@fortawesome/free-solid-svg-icons";
 
+
 export const iconClassByExtension = {
     pdf: faFilePdf,
     tex: faFileCode,
@@ -49,18 +50,35 @@ export const iconClassByExtension = {
     bat: faFileCode,
 };
 
-export const removeTrailingSlash = (path) => {
-    if (path.length === 0) {
-        return path;
+export function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+export async function downloadFile(link, name) {
+    const path = `${BACKEND_URL}${link}`
+    const response = await fetch(path, {credentials: "include"});
+
+    if (response.status !== 200) {
+        throw {status: response.status, data: response.statusText};
     }
 
-    for (var i = path.length - 1; i >= 0; i--) {
-        if (path.at(i) !== "/") {
-            return path.slice(0, i + 1);
-        }
-    }
+    await response.blob().then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const doc = document.createElement('a');
+        doc.href = url;
+        doc.download = name;
+        document.body.appendChild(doc);
+        doc.click();
+        doc.remove();
+        window.URL.revokeObjectURL(url);
+    });
 
-    return "";
+    return null;
 }
 
 export const BACKEND_URL = 'http://localhost:8000';
