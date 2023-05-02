@@ -1,9 +1,9 @@
-import {createBrowserRouter, redirect} from 'react-router-dom'
+import {createBrowserRouter} from 'react-router-dom'
 
 import ErrorPage from "./components/Error";
 import NavBar from "./components/Navbar"
 import DirectoryContainer from "./components/DirectoryContainer";
-import LoginPage from "./components/Login"
+import HomePage from "./components/Home";
 import {directoryLoader} from "./loaders";
 
 
@@ -14,11 +14,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: redirect("/directory/"),
-            },
-            {
-                path: "/login/",
-                element: <LoginPage/>
+                element: <HomePage/>,
             },
             {
                 path: '/directory/*',

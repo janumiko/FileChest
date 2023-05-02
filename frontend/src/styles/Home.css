@@ -1,0 +1,78 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #f2f2f2;
+  font-family: Arial, sans-serif;
+}
+
+.home h1 {
+  margin-bottom: 1rem;
+  font-size: 5rem;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #007bff;
+  text-shadow: 2px 2px 0px #ddd;
+}
+
+.home p {
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  color: #666666;
+}
+
+.home form {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home label {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333333;
+}
+
+.home input[type="text"],
+.home input[type="password"] {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  margin-bottom: 1rem;
+}
+
+.home button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home button[type="submit"]:hover {
+  background-color: #0069d9;
+}
+
+.home .error-message {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .home form {
+    padding: 1rem;
+  }
+}

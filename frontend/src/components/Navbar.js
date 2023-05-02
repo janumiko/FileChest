@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Nav, Navbar} from 'react-bootstrap'
+import {Navbar} from 'react-bootstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBoxArchive} from '@fortawesome/free-solid-svg-icons';
 import {Outlet, useNavigate} from "react-router-dom";
@@ -7,13 +7,6 @@ import {Outlet, useNavigate} from "react-router-dom";
 import '../styles/Navbar.css'
 
 const NavBar = () => {
-    let navigate = useNavigate();
-
-    const routeChange = () => {
-        let path = "/login/";
-        navigate(path);
-    }
-
     return (
         <div>
             <Navbar expand="md">
@@ -24,11 +17,6 @@ const NavBar = () => {
                     </div>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ms-auto">
-                        <Button variant="primary" onClick={routeChange}>Login</Button>
-                    </Nav>
-                </Navbar.Collapse>
             </Navbar>
             <Outlet/>
         </div>

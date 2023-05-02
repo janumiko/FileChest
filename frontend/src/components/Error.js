@@ -5,10 +5,10 @@ const ErrorPage = () => {
     const error = useRouteError();
     let navigate = useNavigate();
 
-    // navigate to /login/ if the user is not authenticated
+    // navigate to homePage if the user is not authenticated
     useEffect(() => {
         if (error.status === 401) {
-            navigate("/login/");
+            navigate("/");
         }
     }, [error, navigate]);
 
