@@ -12,6 +12,22 @@ const HomePage = () => {
     
     let navigate = useNavigate();
 
+    async function checkIfLoggedIn() {
+        const response = await fetch(`${BACKEND_URL}/authorized/`,
+            {
+                method: "GET",
+                credentials: "include",
+            }
+        );
+
+        if (response.status === 200) {
+            return true;
+        }
+
+        return false;
+    }
+
+
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -63,7 +79,11 @@ const HomePage = () => {
     };
 
     const handleLoginClick = () => {
-        setVisibleLogin(true);
+        if (checkIfLoggedIn()) {
+            navigate("/directory/")
+        } else {
+            setVisibleLogin(true);
+        }
     };
 
     return (
