@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import {BACKEND_URL} from "../utils";
@@ -9,6 +9,14 @@ const HomePage = () => {
 
     let navigate = useNavigate();
 
+    useEffect(() => {
+        checkIfLoggedIn().then((isLoggedIn) => {
+            if (isLoggedIn) {
+                navigate("/directory/");
+            }
+        });
+    }, []);
+
     async function checkIfLoggedIn() {
         const response = await fetch(`${BACKEND_URL}/authorized/`,
             {
@@ -17,11 +25,7 @@ const HomePage = () => {
             }
         );
 
-        if (response.status === 200) {
-            return true;
-        }
-
-        return false;
+        return response.status === 200;
     }
 
 
