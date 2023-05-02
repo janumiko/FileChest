@@ -1,16 +1,18 @@
-import React, {useState} from 'react';
-import { Button, Form, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {BACKEND_URL} from "../utils";
 
-import '../styles/Home.css';
 
 const HomePage = () => {
     const [errorMessage, setErrorMessage] = useState("");
-    const [visibleLogin, setVisibleLogin] = useState(false);
-    
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     let navigate = useNavigate();
+
+    useEffect(() => {
+        checkIfLoggedIn();
+    }, []);
 
     async function checkIfLoggedIn() {
         const response = await fetch(`${BACKEND_URL}/authorized/`,
@@ -20,20 +22,15 @@ const HomePage = () => {
             }
         );
 
-        if (response.status === 200) {
-            return true;
-        }
-
-        return false;
+        response.status === 200 ? setIsLoggedIn(true) : setIsLoggedIn(false);
     }
 
 
     async function handleSubmit(event) {
         event.preventDefault();
 
-        let formData = new FormData(event.currentTarget);
-        let username = formData.get("username");
-        let password = formData.get("password");
+        const username = event.target.elements.username.value;
+        const password = event.target.elements.password.value;
 
         const response = await fetch(`${BACKEND_URL}/login/`,
             {
@@ -56,48 +53,35 @@ const HomePage = () => {
         }
     }
 
-    const renderLoginForm = () => {
-        return (
-            <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="formUsername">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" name="username" placeholder="Enter username" />
-                </Form.Group>
-
-                <Form.Group controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" name="password" placeholder="Enter password" />
-                </Form.Group>
-
-                {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-
-                <Button variant="primary" type="submit">
-                    Login
-                </Button>
-            </Form>
-        );
-    };
-
-    const handleLoginClick = () => {
-        if (checkIfLoggedIn()) {
-            navigate("/directory/")
-        } else {
-            setVisibleLogin(true);
-        }
-    };
-
     return (
-        <div className="home">
-            <h1 className="text-center display-3 mb-5">FileChest</h1>
-            <p className="text-center">Please login to continue.</p>
-            <div className="d-flex justify-content-center">
-                {visibleLogin ? (
-                    renderLoginForm()
-                ) : (
-                    <Button variant="primary" onClick={handleLoginClick}>
-                        Login
-                    </Button>
-                )}
+        <div className="container">
+            <div className="position-absolute top-50 start-50 translate-middle">
+                <div className="card text-center shadow-lg">
+                    <div className="card-header">
+                        <h1 className="display-1 fw-bold text-primary mb-3 fst-italic">FileChest</h1>
+                    </div>
+                    <div className="card-body">
+                        {isLoggedIn ? (
+                            <button className="btn btn-primary" onClick={() => navigate("/directory/")}>
+                                Go to directory
+                            </button>
+                        ) : (
+                            <div>
+                                <h5 className="card-title p-3">Please login to continue</h5>
+                                <form onSubmit={handleSubmit}>
+                                    <input className="form-control mb-3" type="text" name="username"
+                                           placeholder="Username"/>
+                                    <input className="form-control mb-3" type="password" name="password"
+                                           placeholder="Password" autoComplete="on"/>
+                                    <button className="btn btn-primary" type="submit">Login</button>
+                                </form>
+                                <div className="alert alert-danger mt-3" role="alert" hidden={errorMessage === ""}>
+                                    {errorMessage}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFile, faFileDownload, faFileZipper, faFolder, faFolderTree, faTags} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLoaderData, useLocation, useSearchParams} from "react-router-dom";
@@ -10,7 +10,6 @@ import {BACKEND_URL, downloadFile, formatBytes, iconClassByExtension} from "../u
 
 
 function TagsSelect() {
-    const [selectedTags, setSelectedTags] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
 
     const loadOptions = inputValue => {
@@ -18,7 +17,6 @@ function TagsSelect() {
     };
 
     const handleChange = tags => {
-        setSelectedTags(tags);
         searchParams.delete('tags');
         tags.map(tag => searchParams.append('tags', tag.value));
         setSearchParams(searchParams);
@@ -34,7 +32,7 @@ function TagsSelect() {
             cacheOptions
             defaultOptions
             loadOptions={loadOptions}
-            value={selectedTags}
+            value={searchParams.getAll('tags').map(tag => ({value: tag, label: tag}))}
             onChange={handleChange}
         />
     );
@@ -55,7 +53,9 @@ const DirectoryHeader = ({currentFolder, location}) => {
     };
 
     const handleChange = event => {
-        setSearchParams({name: event.target.value});
+        searchParams.delete('name');
+        searchParams.append('name', event.target.value);
+        setSearchParams(searchParams);
     };
 
     return (
@@ -63,7 +63,7 @@ const DirectoryHeader = ({currentFolder, location}) => {
             <Breadcrumbs/>
             <hr/>
             <div className="d-flex bd-highlight">
-                <div className="p-2 flex-grow-1 bd-highlight">
+                <div className="p-2 flex-grow-1 bd-highlight text-truncate">
                     <h3><FontAwesomeIcon icon={faFolderTree}/> {currentFolder}</h3>
                 </div>
                 {location.pathname !== '/directory' && <div className="d-flex p-2 justify-content-end">
@@ -81,8 +81,13 @@ const DirectoryHeader = ({currentFolder, location}) => {
             <div className="d-flex bd-highlight">
                 <div className="p-2 bd-highlight">
                     <div className="input-group mb-3">
-                        <input type="text" className="form-control mt-0" placeholder="Name" aria-label="Name"
-                               aria-describedby="basic-addon1" onChange={handleChange}/>
+                        <input
+                            type="text" className="form-control mt-0"
+                            placeholder="Name" aria-label="Name"
+                            aria-describedby="basic-addon1"
+                            onChange={handleChange}
+                            value={searchParams.get('name') || ''}
+                        />
                     </div>
                 </div>
                 <div className="p-2 flex-grow-1 bd-highlight">
@@ -95,7 +100,7 @@ const DirectoryHeader = ({currentFolder, location}) => {
                     <div className="input-group-text">
                         <div className="form-check form-switch">
                             <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                                   onClick={handleClick}/>
+                                   onClick={handleClick} defaultChecked={searchParams.get('recursive') === ""}/>
                             <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Recursive</label>
                         </div>
                     </div>
@@ -122,11 +127,11 @@ const DirectoryBody = ({directoryData, location}) => {
 }
 
 
-const FileItem = ({file}) => {
+const FileItem = ({file, location}) => {
     const extension = file.name.split('.').pop();
     // FIXME: find a better way to create the file link
     const relativePath = file["relative_path"].replace(/\\/g, "/")
-    const fileLink = `/download/file/${relativePath}/${file.name}`.replace('./', '');
+    const fileLink = `${location.pathname.replace('directory', 'download/file')}${relativePath}/${file.name}`.replace('./', '');
 
     return (
         <li key={file.name} className="list-group-item">
@@ -142,7 +147,10 @@ const FileItem = ({file}) => {
                 </div>
                 <div className="col-3">
                     {file["relative_path"] ?
-                        <Link to={`/directory/${file["relative_path"]}`}>{file["relative_path"]}</Link> : null}
+                        <Link to={{
+                            pathname: `/directory/${file["relative_path"]}`,
+                            search: location.search
+                        }}>{file["relative_path"]}</Link> : null}
                 </div>
                 <div className="col-1 p-2">
                     {formatBytes(file.size)}
@@ -182,7 +190,12 @@ const FolderItem = ({folder, location}) => {
                     />
                 </div>
                 <div className="p-2 flex-grow-1 bd-highlight">
-                    <Link to={`${location.pathname}/${folder.name}`}>{folder.name}</Link>
+                    <Link to={{
+                        pathname: `${location.pathname}/${folder.name}`,
+                        search: location.search
+                    }}>
+                        {folder.name}
+                    </Link>
                 </div>
             </div>
             {folder.tags.length > 0 ? (
@@ -205,13 +218,13 @@ const FolderItem = ({folder, location}) => {
 const DirectoryContainer = () => {
     const directoryData = useLoaderData();
     const location = useLocation();
-    const currentFolder = decodeURI(location.pathname.split("/").pop());
 
     location.pathname = location.pathname.replace(/\/$/, "");
+    const currentFolder = decodeURI(location.pathname.split("/").pop());
 
     return (
-        <div className="container mt-5">
-            <div className="card">
+        <div className="container">
+            <div className="card mt-5 shadow-lg">
                 <DirectoryHeader currentFolder={currentFolder} location={location}/>
                 <DirectoryBody directoryData={directoryData} location={location}/>
             </div>
