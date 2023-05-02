@@ -13,10 +13,10 @@ export default function Breadcrumbs() {
                     const routeTo = `/${crumbs.slice(0, index + 1).join("/")}`;
                     const isLast = index === crumbs.length - 1;
                     return isLast ? (
-                        <li key={crumb} className="breadcrumb-item active" aria-current="page">{crumb}</li>
+                        <li key={crumb} className="breadcrumb-item active" aria-current="page">{decodeURI(crumb)}</li>
                     ) : (
                         <li key={crumb} className="breadcrumb-item">
-                            <Link to={routeTo}>{crumb}</Link>
+                            <Link to={routeTo}>{decodeURI(crumb)}</Link>
                         </li>
                     );
                 })}

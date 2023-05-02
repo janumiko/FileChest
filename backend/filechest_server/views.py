@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PurePath
 from shutil import make_archive
 from typing import Dict, Tuple
 
@@ -22,19 +22,19 @@ class DirectoryAPIView(views.APIView):
     API endpoint that allows users to view a directory.
     """
 
-    def get(self, request: HttpRequest, path: str = ".") -> Response:
+    def get(self, request: HttpRequest, url_path: str = ".") -> Response:
         """
         Get a directory.
 
         Args:
             request: The request object.
-            path: The path of the directory.
+            url_path: The path of the directory.
 
         Returns:
             A list of files and folders.
         """
 
-        path = Path("root").joinpath(path)
+        path = Path("root").joinpath(url_path.strip("/"))
 
         get_object_or_404(Folder, path=path.parent, name=path.name)
 
@@ -62,11 +62,11 @@ class DirectoryAPIView(views.APIView):
         params = self.get_query_params(request, path)
 
         if "recursive" not in request.query_params:
-            folders = Folder.objects.filter(**params)
+            folders = Folder.objects.filter(**params).distinct()
         else:
             folders = File.objects.none()
 
-        files = File.objects.filter(**params)
+        files = File.objects.filter(**params).distinct()
 
         return folders, files
 
@@ -133,7 +133,7 @@ class FileView(views.APIView):
             A FileResponse object.
         """
 
-        path = Path("root").joinpath(url_path)
+        path = Path("root").joinpath(url_path.strip("/"))
         folder_path = path.parent
 
         folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
@@ -157,7 +157,7 @@ class DownloadFileView(views.APIView):
             A FileResponse object as an attachment.
         """
 
-        path = Path("root").joinpath(url_path)
+        path = Path("root").joinpath(url_path.strip("/"))
         folder_path = path.parent
 
         folder = get_object_or_404(Folder, path=folder_path.parent, name=folder_path.name)
@@ -181,8 +181,13 @@ class DownloadDirectoryView(views.APIView):
             A FileResponse object as an attachment.
         """
 
-        path = Path("root").joinpath(url_path)
-        make_archive(str(settings.MEDIA_ROOT.joinpath(path.name)), "zip", path)
+        path = Path("root").joinpath(url_path.strip("/"))
+        get_object_or_404(Folder, path=path.parent, name=path.name)
+
+        # make archive of folder at path, save it on media folder
+        make_archive(
+            settings.MEDIA_ROOT.joinpath(path.name), "zip", settings.MEDIA_ROOT.joinpath(path)
+        )
 
         return FileResponse(
             open(settings.MEDIA_ROOT.joinpath(path.name + ".zip"), "rb"), as_attachment=True
