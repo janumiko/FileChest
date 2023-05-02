@@ -251,3 +251,15 @@ class LogoutView(views.APIView):
         response.data = {"Success": "Logout successfully"}
 
         return response
+
+
+class IsAuthorizedView(views.APIView):
+    def get(self, request, format=None) -> Response:
+        """
+        Return if the user is authorized.
+        """
+
+        response = Response()
+        response.data = {"Success": "User is authorized"}
+
+        return response

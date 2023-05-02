@@ -14,4 +14,5 @@ urlpatterns = [
     path(r"tags/", views.TagsAPIView.as_view()),
     path(r"login/", views.LoginView.as_view(), name="login"),
     path(r"logout/", views.LogoutView.as_view(), name="logout"),
+    path(r"authorized/", views.IsAuthorizedView.as_view(), name="authorized"),
 ]
