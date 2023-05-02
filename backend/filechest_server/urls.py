@@ -13,4 +13,5 @@ urlpatterns = [
     path(r"view/<path:url_path>", views.FileView.as_view()),
     path(r"tags/", views.TagsAPIView.as_view()),
     path(r"login/", views.LoginView.as_view(), name="login"),
+    path(r"logout/", views.LogoutView.as_view(), name="logout"),
 ]

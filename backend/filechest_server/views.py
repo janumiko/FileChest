@@ -234,3 +234,20 @@ class LoginView(views.APIView):
         response.data = {"Success": "Login successfully", "data": data}
 
         return response
+
+
+class LogoutView(views.APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None) -> Response:
+        """
+        Make the JWT token invalid to logout the user.
+        """
+
+        response = Response()
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
+        response.delete_cookie("csrftoken")
+        response.data = {"Success": "Logout successfully"}
+
+        return response

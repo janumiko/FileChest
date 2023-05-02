@@ -9,13 +9,14 @@ import {directoryLoader} from "./loaders";
 
 const router = createBrowserRouter([
     {
+        path: "/",
+        element: <HomePage/>,
+        errorElement: <ErrorPage/>,
+    },
+    {
         element: <NavBar/>,
         errorElement: <ErrorPage/>,
         children: [
-            {
-                path: "/",
-                element: <HomePage/>,
-            },
             {
                 path: '/directory/*',
                 element: <DirectoryContainer/>,
