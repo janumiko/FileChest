@@ -9,6 +9,22 @@ const HomePage = () => {
 
     let navigate = useNavigate();
 
+    async function checkIfLoggedIn() {
+        const response = await fetch(`${BACKEND_URL}/authorized/`,
+            {
+                method: "GET",
+                credentials: "include",
+            }
+        );
+
+        if (response.status === 200) {
+            return true;
+        }
+
+        return false;
+    }
+
+
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -36,7 +52,6 @@ const HomePage = () => {
         }
     }
 
-    // login page with card
     return (
         <div className="container">
             <div className="position-absolute top-50 start-50 translate-middle">
