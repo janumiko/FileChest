@@ -52,7 +52,9 @@ const HomePage = () => {
                                    placeholder="Password" autoComplete="on"/>
                             <button className="btn btn-primary" type="submit">Login</button>
                         </form>
-                        <div className="alert alert-danger mt-3" role="alert" hidden={errorMessage === ""}>{errorMessage}</div>
+                        <div className="alert alert-danger mt-3" role="alert" hidden={errorMessage === ""}>
+                            {errorMessage}
+                        </div>
                     </div>
                 </div>
             </div>

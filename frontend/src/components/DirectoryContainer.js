@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFile, faFileDownload, faFileZipper, faFolder, faFolderTree, faTags} from '@fortawesome/free-solid-svg-icons';
 import {Link, useLoaderData, useLocation, useSearchParams} from "react-router-dom";
@@ -81,8 +81,13 @@ const DirectoryHeader = ({currentFolder, location}) => {
             <div className="d-flex bd-highlight">
                 <div className="p-2 bd-highlight">
                     <div className="input-group mb-3">
-                        <input type="text" className="form-control mt-0" placeholder="Name" aria-label="Name"
-                               aria-describedby="basic-addon1" onChange={handleChange} value={searchParams.get('name') || ''}/>
+                        <input
+                            type="text" className="form-control mt-0"
+                            placeholder="Name" aria-label="Name"
+                            aria-describedby="basic-addon1"
+                            onChange={handleChange}
+                            value={searchParams.get('name') || ''}
+                        />
                     </div>
                 </div>
                 <div className="p-2 flex-grow-1 bd-highlight">
@@ -142,7 +147,10 @@ const FileItem = ({file, location}) => {
                 </div>
                 <div className="col-3">
                     {file["relative_path"] ?
-                        <Link to={{pathname: `/directory/${file["relative_path"]}`, search: location.search}}>{file["relative_path"]}</Link> : null}
+                        <Link to={{
+                            pathname: `/directory/${file["relative_path"]}`,
+                            search: location.search
+                        }}>{file["relative_path"]}</Link> : null}
                 </div>
                 <div className="col-1 p-2">
                     {formatBytes(file.size)}
@@ -182,7 +190,12 @@ const FolderItem = ({folder, location}) => {
                     />
                 </div>
                 <div className="p-2 flex-grow-1 bd-highlight">
-                    <Link to={{pathname: `${location.pathname}/${folder.name}`, search: location.search}}>{folder.name}</Link>
+                    <Link to={{
+                        pathname: `${location.pathname}/${folder.name}`,
+                        search: location.search
+                    }}>
+                        {folder.name}
+                    </Link>
                 </div>
             </div>
             {folder.tags.length > 0 ? (

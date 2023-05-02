@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Navbar, Nav} from 'react-bootstrap'
+import {Button, Nav, Navbar} from 'react-bootstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBoxArchive} from '@fortawesome/free-solid-svg-icons';
 import {Outlet, useNavigate} from "react-router-dom";
@@ -12,7 +12,7 @@ const NavBar = () => {
     let navigate = useNavigate();
 
     const LogOut = async () => {
-        fetch(`${BACKEND_URL}/logout/`, 
+        fetch(`${BACKEND_URL}/logout/`,
             {
                 credentials: "include"
             }
